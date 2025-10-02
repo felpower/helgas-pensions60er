@@ -1,16 +1,22 @@
 <template>
   <div id="app" @click="addConfetti">
-    <!-- Floating Fun Elements -->
-    <FloatingElements />
+    <!-- Quiz Gate - appears first -->
+    <QuizGate @unlock="unlockWebsite" />
     
-    <!-- Music Controls -->
-    <MusicControls 
-      :isPlaying="musicPlaying" 
-      :volume="musicVolume"
-      @toggle-music="toggleMusic"
-      @volume-change="changeVolume"
-      @next-song="nextSong"
-    />
+    <!-- Main Website Content - only shown after quiz -->
+    <div v-if="websiteUnlocked" class="main-website">
+      <!-- Floating Fun Elements -->
+      <FloatingElements />
+      
+      <!-- Music Controls -->
+      <MusicControls 
+        :isPlaying="musicPlaying" 
+        :volume="musicVolume"
+        :currentSong="currentSong"
+        @toggle-music="toggleMusic"
+        @volume-change="changeVolume"
+        @next-song="nextSong"
+      />
     
     <!-- Scroll Indicator -->
     <ScrollIndicator 
@@ -24,15 +30,15 @@
       <!-- Hero Section -->
       <section id="hero" class="section hero-section" data-aos="fade-up">
         <div class="hero-content">
-          <h1 class="section-title rainbow-text">
-            🎉 HELGA'S FABULOUS 60TH UND PENSION! 🎂
-          </h1>
-          <div class="hero-subtitle" data-aos="zoom-in" data-aos-delay="500">
-            <p>Get ready for the most epic birthday journey ever!</p>
-            <div class="scroll-hint" data-aos="bounce" data-aos-delay="1000">
-              👇 Scroll down for the adventure! 👇
-            </div>
-          </div>
+           <h1 class="section-title rainbow-text">
+             🎉 HELGAS FANTASTISCHER 60. GEBURTSTAG! 🎂
+           </h1>
+           <div class="hero-subtitle" data-aos="zoom-in" data-aos-delay="500">
+             <p>Mach dich bereit für die tollste Geburtstagsreise aller Zeiten!</p>
+             <div class="scroll-hint" data-aos="bounce" data-aos-delay="1000">
+               👇 Scroll nach unten für das Abenteuer! 👇
+             </div>
+           </div>
         </div>
         <div class="hero-decorations">
           <div class="birthday-cake">🎂</div>
@@ -43,10 +49,10 @@
 
       <!-- Early Years Section -->
       <section id="early-years" class="section" data-aos="fade-right">
-        <h2 class="section-title">👶 The Early Years 👶</h2>
+        <h2 class="section-title">👶 Die frühen Jahre 👶</h2>
         <div class="story-text" data-aos="flip-left">
-          <p>Once upon a time, in a land far, far away... just kidding! 😄</p>
-          <p>But seriously, let's take a trip down memory lane and see how our amazing Helga became the legend she is today!</p>
+          <p>Es war einmal, in einem Land weit, weit weg... nur ein Scherz! 😄</p>
+          <p>Aber im Ernst, lass uns eine Reise in die Vergangenheit machen und sehen, wie unsere wunderbare Helga zu der Legende wurde, die sie heute ist!</p>
         </div>
         <PhotoGrid 
           :photos="earlyYearsPhotos" 
@@ -57,10 +63,10 @@
 
       <!-- Young Adult Adventures -->
       <section id="young-adult" class="section" data-aos="fade-left">
-        <h2 class="section-title">🌟 Young & Wild 🌟</h2>
+        <h2 class="section-title">🌟 Jung & Wild 🌟</h2>
         <div class="story-text" data-aos="flip-right">
-          <p>The years when Helga was conquering the world, one adventure at a time!</p>
-          <p>Fashion icon, trendsetter, and all-around awesome human being! ✨</p>
+          <p>Die Jahre, in denen Helga die Welt eroberte, ein Abenteuer nach dem anderen!</p>
+          <p>Mode-Ikone, Trendsetterin und rundherum fantastischer Mensch! ✨</p>
         </div>
         <PhotoGrid 
           :photos="youngAdultPhotos" 
@@ -71,18 +77,26 @@
 
       <!-- Family Life Section -->
       <section id="family-life" class="section" data-aos="zoom-in">
-        <h2 class="section-title">👨‍👩‍👧‍👦 Family Adventures 👨‍👩‍👧‍👦</h2>
+        <h2 class="section-title">👨‍👩‍👧‍👦 Familienabenteuer 👨‍👩‍👧‍👦</h2>
         <div class="story-text" data-aos="slide-up">
-          <p>The chapter where Helga became the world's most amazing mom!</p>
-          <p>Raising kids, creating memories, and still managing to look fabulous! 💅</p>
+          <p>Das Kapitel, in dem Helga zur weltbesten Mama wurde!</p>
+          <p>Kinder großziehen, Erinnerungen schaffen und dabei immer noch fabelhaft aussehen! 💅</p>
         </div>
         <PhotoGrid 
           :photos="familyPhotos" 
           @photo-click="openPhotoModal"
           data-aos="fade-up"
         />
+      </section>
+
+      <!-- Performances Section -->
+      <section id="performances" class="section performances-section" data-aos="fade-up">
+        <h2 class="section-title">🎤 Helgas größte Auftritte 🎵</h2>
+        <div class="story-text" data-aos="slide-up">
+          <p>Die Bühne war schon immer ihr zweites Zuhause! 🎭</p>
+          <p>Vom örtlichen Theater bis zu Gemeindeveranstaltungen - Helgas Stimme hat unzählige Herzen erfreut! ✨🎶</p>
+        </div>
         
-        <!-- Video Section -->
         <VideoPlayer 
           v-if="familyVideos.length > 0"
           :videos="familyVideos"
@@ -93,10 +107,10 @@
 
       <!-- Recent Years Section -->
       <section id="recent-years" class="section" data-aos="fade-up">
-        <h2 class="section-title">🎭 The Golden Years 🎭</h2>
+        <h2 class="section-title">🎭 Die goldenen Jahre 🎭</h2>
         <div class="story-text" data-aos="slide-right">
-          <p>Recent adventures, new hobbies, and proving that 60 is the new 30!</p>
-          <p>Still fabulous, still amazing, still our favorite person! 🌟</p>
+          <p>Neue Abenteuer, neue Hobbys und der Beweis, dass 60 das neue 30 ist!</p>
+          <p>Immer noch fabelhaft, immer noch erstaunlich, immer noch unser Lieblingsmensch! 🌟</p>
         </div>
         <PhotoGrid 
           :photos="recentPhotos" 
@@ -107,27 +121,28 @@
 
       <!-- Birthday Wishes Section -->
       <section id="birthday-wishes" class="section birthday-section" data-aos="zoom-in">
-        <h2 class="section-title party-mode">🎊 HAPPY 60TH BIRTHDAY! 🎊</h2>
+        <h2 class="section-title party-mode">🎊 ALLES GUTE ZUM 60. GEBURTSTAG! 🎊</h2>
         <div class="birthday-content">
           <div class="birthday-message" data-aos="bounce">
-            <p>🎉 Sixty years of awesome! 🎉</p>
-            <p>🌟 Here's to many more adventures! 🌟</p>
-            <p>💖 You're not getting older, you're getting better! 💖</p>
-            <p>🎂 May your day be filled with laughter, love, and cake! 🎂</p>
+            <p>🎉 Sechzig Jahre voller Großartigkeit! 🎉</p>
+            <p>🌟 Auf viele weitere Abenteuer! 🌟</p>
+            <p>💖 Du wirst nicht älter, du wirst besser! 💖</p>
+            <p>🎂 Möge dein Tag voller Lachen, Liebe und Kuchen sein! 🎂</p>
+            <p>💖 Mama ich hab dich unendlich lieb, danke dass es dich gibt! 🥰</p>
           </div>
           
           <div class="birthday-stats" data-aos="fade-up" data-aos-delay="500">
             <div class="stat-item">
               <div class="stat-number">60</div>
-              <div class="stat-label">Years of Awesome</div>
+              <div class="stat-label">Jahre voller Großartigkeit</div>
             </div>
             <div class="stat-item">
               <div class="stat-number">∞</div>
-              <div class="stat-label">Memories Made</div>
+              <div class="stat-label">Erinnerungen geschaffen</div>
             </div>
             <div class="stat-item">
               <div class="stat-number">💯</div>
-              <div class="stat-label">Fabulous Level</div>
+              <div class="stat-label">Fabelhafte Stufe</div>
             </div>
           </div>
         </div>
@@ -138,18 +153,23 @@
     <PhotoModal 
       v-if="selectedPhoto"
       :photo="selectedPhoto"
+      :hasPrevious="hasPreviousPhoto"
+      :hasNext="hasNextPhoto"
       @close="closePhotoModal"
+      @prev-photo="goToPreviousPhoto"
+      @next-photo="goToNextPhoto"
     />
 
-    <!-- Background Audio -->
-    <audio 
-      ref="backgroundMusic" 
-      loop 
-      preload="auto"
-      @ended="nextSong"
-    >
-      <source :src="currentSong.src" type="audio/mpeg">
-    </audio>
+      <!-- Background Audio -->
+      <audio 
+        ref="backgroundMusic" 
+        loop 
+        preload="auto"
+        @ended="nextSong"
+      >
+        <source :src="currentSong.src" type="audio/mpeg">
+      </audio>
+    </div>
   </div>
 </template>
 
@@ -160,6 +180,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 // Import components
+import QuizGate from './components/QuizGate.vue'
 import FloatingElements from './components/FloatingElements.vue'
 import MusicControls from './components/MusicControls.vue'
 import ScrollIndicator from './components/ScrollIndicator.vue'
@@ -172,6 +193,7 @@ gsap.registerPlugin(ScrollTrigger)
 export default {
   name: 'App',
   components: {
+    QuizGate,
     FloatingElements,
     MusicControls,
     ScrollIndicator,
@@ -181,73 +203,76 @@ export default {
   },
   setup() {
     // Reactive data
+    const websiteUnlocked = ref(false)
     const musicPlaying = ref(false)
     const musicVolume = ref(0.5)
     const currentSongIndex = ref(0)
     const selectedPhoto = ref(null)
+    const currentPhotoIndex = ref(0)
+    const currentPhotoSection = ref('')
     const currentSection = ref(0)
     const backgroundMusic = ref(null)
 
     // Sample data - you'll replace these with your actual content
     const songs = ref([
-      { name: "Happy Birthday Song", src: "/audio/happy-birthday.mp3" },
-      { name: "Celebration", src: "/audio/celebration.mp3" },
-      { name: "Good Times", src: "/audio/good-times.mp3" },
-      { name: "Dancing Queen", src: "/audio/dancing-queen.mp3" },
-      { name: "Sweet Caroline", src: "/audio/sweet-caroline.mp3" }
+    { name: "Alles gute zum Geburtstag", src: "/audio/alles_gute_zum_geburtstag.mp3" },
+      { name: "Der Frohe Wanderer", src: "/audio/der_frohe_wanderer.mp3" },
+      
+      
     ])
 
     const sections = ref([
-      { id: 'hero', name: 'Start' },
-      { id: 'early-years', name: 'Early Years' },
-      { id: 'young-adult', name: 'Young & Wild' },
-      { id: 'family-life', name: 'Family' },
-      { id: 'recent-years', name: 'Golden Years' },
-      { id: 'birthday-wishes', name: 'Birthday!' }
+      { id: 'hero', name: 'Start', emoji: '🎉' },
+      { id: 'early-years', name: 'Frühe Jahre', emoji: '👶' },
+      { id: 'young-adult', name: 'Jung & Wild', emoji: '🌟' },
+      { id: 'family-life', name: 'Familie', emoji: '👨‍👩‍👧‍👦' },
+      { id: 'performances', name: 'Auftritte', emoji: '🎤' },
+      { id: 'recent-years', name: 'Goldene Jahre', emoji: '🎭' },
+      { id: 'birthday-wishes', name: 'Geburtstag!', emoji: '🎂' }
     ])
 
-    // Sample photo data - replace with your actual photos
+    // Beispiel-Fotodaten - ersetze diese mit deinen echten Fotos
     const earlyYearsPhotos = ref([
-      { id: 1, src: '/photos/early/photo1.jpg', caption: 'Baby Helga being adorable! 👶', year: '1963' },
-      { id: 2, src: '/photos/early/photo2.jpg', caption: 'First steps into awesomeness! 👣', year: '1965' },
-      { id: 3, src: '/photos/early/photo3.jpg', caption: 'School days and big dreams! 📚', year: '1970' }
+      { id: 1, src: '/photos/early/HelgaUndArny1.jpg', caption: 'Baby Helga - einfach zum Verlieben! 👶' },
+      { id: 2, src: '/photos/early/HelgaUndArny2.jpg', caption: 'Erste Schritte ins Großartige! 👣' },
+      { id: 3, src: '/photos/early/HelgaUndArny1.jpg', caption: 'Helga und ihr Idol, der Arny 📚' }
     ])
 
     const youngAdultPhotos = ref([
-      { id: 4, src: '/photos/young/photo1.jpg', caption: 'Fashion icon in the making! 💃', year: '1980' },
-      { id: 5, src: '/photos/young/photo2.jpg', caption: 'Living her best life! ✨', year: '1985' },
-      { id: 6, src: '/photos/young/photo3.jpg', caption: 'Adventure time! 🌍', year: '1988' }
+      { id: 4, src: '/photos/young/Tritsch_Tratsch.png', caption: 'Mode-Ikone in Entstehung! 💃' },
+      { id: 5, src: '/videos/1002.gif', caption: 'Das Leben in vollen Zügen genießen! ✨' },
+      { id: 6, src: '/photos/young/photo3.jpg', caption: 'Abenteuerzeit! 🌍' }
     ])
 
     const familyPhotos = ref([
-      { id: 7, src: '/photos/family/photo1.jpg', caption: 'The best mom ever! 👩‍👧‍👦', year: '1995' },
-      { id: 8, src: '/photos/family/photo2.jpg', caption: 'Family vacation memories! 🏖️', year: '2000' },
-      { id: 9, src: '/photos/family/photo3.jpg', caption: 'Creating magical moments! ✨', year: '2005' }
+      { id: 7, src: '/photos/family/photo1.jpg', caption: 'Die beste Mama der Welt! 👩‍👧‍👦' },
+      { id: 8, src: '/photos/family/photo2.jpg', caption: 'Familienurlaub-Erinnerungen! 🏖️' },
+      { id: 9, src: '/photos/family/photo3.jpg', caption: 'Magische Momente schaffen! ✨' }
     ])
 
-    const recentPhotos = ref([
-      { id: 10, src: '/photos/recent/photo1.jpg', caption: 'Still fabulous at 59! 💅', year: '2023' },
-      { id: 11, src: '/photos/recent/photo2.jpg', caption: 'New adventures await! 🌟', year: '2024' },
-      { id: 12, src: '/photos/recent/photo3.jpg', caption: 'Ready for 60! 🎉', year: '2024' }
+    const recentPhotos = ref([ 
+      { id: 10, src: '/photos/recent/photo1.jpg', caption: 'Mit 59 immer noch fabelhaft! 💅'},
+      { id: 11, src: '/photos/recent/photo2.jpg', caption: 'Neue Abenteuer warten! 🌟'},
+      { id: 12, src: '/photos/recent/photo3.jpg', caption: 'Bereit für die 60! 🎉' }
     ])
 
      const familyVideos = ref([
        { 
          id: 1, 
-         src: '/videos/family-moments.mp4', 
-         caption: 'Best family moments compilation!', 
-         type: 'file' 
+         src: 'https://www.youtube.com/watch?v=jdzK4uROk8I', 
+         caption: 'Die reitzenden Reitzenberger Dirndln!', 
+         type: 'youtube' 
        },
        { 
          id: 2, 
-         src: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 
-         caption: 'Helga\'s amazing singing performance! 🎤✨', 
+         src: 'https://www.youtube.com/watch?v=apjYwq3_XiU', 
+         caption: 'Wie die Alten sungen… Helgas fantastische Gesangsperformance! 🎤✨', 
          type: 'youtube' 
        },
        { 
          id: 3, 
-         src: 'https://youtu.be/dQw4w9WgXcQ', 
-         caption: 'Another beautiful song by our star! 🌟🎵', 
+         src: 'https://www.youtube.com/watch?v=u5DEt9ruir0', 
+         caption: 'Auch in Graz warens beim Musikantenstadl 1985! 🌟🎵', 
          type: 'youtube' 
        }
      ])
@@ -272,20 +297,86 @@ export default {
 
     const nextSong = () => {
       currentSongIndex.value = (currentSongIndex.value + 1) % songs.value.length
-      if (musicPlaying.value) {
-        setTimeout(() => {
-          backgroundMusic.value.play()
-        }, 100)
-      }
+      
+      // Warte kurz und spiele dann den neuen Song ab wenn Musik läuft
+      setTimeout(() => {
+        if (backgroundMusic.value && musicPlaying.value) {
+          backgroundMusic.value.load() // Lade die neue Quelle
+          backgroundMusic.value.play().catch(e => console.log('Fehler beim Abspielen:', e))
+        }
+      }, 100)
     }
 
     const openPhotoModal = (photo) => {
       selectedPhoto.value = photo
+      
+      // Finde heraus, in welchem Abschnitt das Foto ist
+      let sectionPhotos = []
+      let sectionName = ''
+      
+      if (earlyYearsPhotos.value.includes(photo)) {
+        sectionPhotos = earlyYearsPhotos.value
+        sectionName = 'early-years'
+      } else if (youngAdultPhotos.value.includes(photo)) {
+        sectionPhotos = youngAdultPhotos.value
+        sectionName = 'young-adult'
+      } else if (familyPhotos.value.includes(photo)) {
+        sectionPhotos = familyPhotos.value
+        sectionName = 'family'
+      } else if (recentPhotos.value.includes(photo)) {
+        sectionPhotos = recentPhotos.value
+        sectionName = 'recent'
+      }
+      
+      currentPhotoIndex.value = sectionPhotos.findIndex(p => p.id === photo.id)
+      currentPhotoSection.value = sectionName
     }
 
     const closePhotoModal = () => {
       selectedPhoto.value = null
+      currentPhotoIndex.value = 0
+      currentPhotoSection.value = ''
     }
+
+    const goToPreviousPhoto = () => {
+      const sectionPhotos = getCurrentSectionPhotos()
+      if (currentPhotoIndex.value > 0) {
+        currentPhotoIndex.value--
+        selectedPhoto.value = sectionPhotos[currentPhotoIndex.value]
+      }
+    }
+
+    const goToNextPhoto = () => {
+      const sectionPhotos = getCurrentSectionPhotos()
+      if (currentPhotoIndex.value < sectionPhotos.length - 1) {
+        currentPhotoIndex.value++
+        selectedPhoto.value = sectionPhotos[currentPhotoIndex.value]
+      }
+    }
+
+    const getCurrentSectionPhotos = () => {
+      switch (currentPhotoSection.value) {
+        case 'early-years':
+          return earlyYearsPhotos.value
+        case 'young-adult':
+          return youngAdultPhotos.value
+        case 'family':
+          return familyPhotos.value
+        case 'recent':
+          return recentPhotos.value
+        default:
+          return []
+      }
+    }
+
+    const hasPreviousPhoto = computed(() => {
+      return currentPhotoIndex.value > 0
+    })
+
+    const hasNextPhoto = computed(() => {
+      const sectionPhotos = getCurrentSectionPhotos()
+      return currentPhotoIndex.value < sectionPhotos.length - 1
+    })
 
     const scrollToSection = (sectionIndex) => {
       const sectionId = sections.value[sectionIndex].id
@@ -295,7 +386,22 @@ export default {
       }
     }
 
+    const unlockWebsite = () => {
+      websiteUnlocked.value = true
+      
+      // Start celebration music after a short delay
+      setTimeout(() => {
+        if (backgroundMusic.value) {
+          backgroundMusic.value.volume = musicVolume.value
+          backgroundMusic.value.play()
+          musicPlaying.value = true
+        }
+      }, 1000)
+    }
+
     const addConfetti = (event) => {
+      if (!websiteUnlocked.value) return // Only allow confetti after unlock
+      
       // Create confetti at click position
       const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57']
       
@@ -373,6 +479,7 @@ export default {
 
     return {
       // Reactive data
+      websiteUnlocked,
       musicPlaying,
       musicVolume,
       selectedPhoto,
@@ -387,13 +494,18 @@ export default {
       
       // Computed
       currentSong,
+      hasPreviousPhoto,
+      hasNextPhoto,
       
       // Methods
+      unlockWebsite,
       toggleMusic,
       changeVolume,
       nextSong,
       openPhotoModal,
       closePhotoModal,
+      goToPreviousPhoto,
+      goToNextPhoto,
       scrollToSection,
       addConfetti
     }
@@ -460,6 +572,31 @@ export default {
   bottom: 20%;
   left: 20%;
   font-size: 2rem;
+}
+
+.performances-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: black;
+  position: relative;
+  overflow: hidden;
+}
+
+.performances-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="50" font-size="20" opacity="0.1">🎵</text></svg>') repeat;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.performances-section .section-title,
+.performances-section .story-text {
+  position: relative;
+  z-index: 1;
 }
 
 .birthday-section {

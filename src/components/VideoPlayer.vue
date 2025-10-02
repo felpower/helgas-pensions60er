@@ -1,7 +1,7 @@
 <template>
   <div class="video-section">
     <h3 class="video-title" data-aos="fade-up">
-      🎤 Helga's Greatest Performances 🎵
+      🎤 Helgas größte Auftritte 🎵
     </h3>
     
     <div class="video-container" data-aos="zoom-in">
@@ -40,7 +40,7 @@
           <div class="video-overlay" v-if="!isPlaying && currentVideo.type !== 'youtube'">
             <div class="play-button" @click="playVideo">
               <div class="play-icon">▶️</div>
-              <div class="play-text">Click to Play</div>
+              <div class="play-text">Klicken zum Abspielen</div>
             </div>
           </div>
           
@@ -61,7 +61,7 @@
             @click="previousVideo"
             :disabled="currentVideoIndex === 0"
           >
-            ⏮️ Previous
+            ⏮️ Zurück
           </button>
           
           <div class="video-counter">
@@ -73,7 +73,7 @@
             @click="nextVideo"
             :disabled="currentVideoIndex === videos.length - 1"
           >
-            Next ⏭️
+            Weiter ⏭️
           </button>
         </div>
         

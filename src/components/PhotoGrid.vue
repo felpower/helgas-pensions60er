@@ -20,10 +20,10 @@
         <div class="photo-overlay">
           <div class="photo-year" v-if="photo.year">{{ photo.year }}</div>
           <div class="photo-actions">
-            <button class="action-btn zoom-btn" title="View Full Size">
+            <button class="action-btn zoom-btn" title="In voller Größe anzeigen">
               🔍
             </button>
-            <button class="action-btn love-btn" @click.stop="toggleLove(photo)" title="Love it!">
+            <button class="action-btn love-btn" @click.stop="toggleLove(photo)" title="Lieben!">
               {{ photo.loved ? '💖' : '🤍' }}
             </button>
           </div>
@@ -43,7 +43,7 @@
     </div>
     
     <!-- Placeholder photos for demo -->
-    <div 
+    <!-- <div 
       v-for="i in placeholderCount" 
       :key="'placeholder-' + i"
       class="photo-item placeholder-item"
@@ -53,11 +53,11 @@
       <div class="photo-wrapper">
         <div class="placeholder-content">
           <div class="placeholder-icon">📷</div>
-          <div class="placeholder-text">Your Photo Here!</div>
-          <div class="placeholder-subtitle">Drop your amazing photos in the /public/photos folder</div>
+          <div class="placeholder-text">Dein Foto hier!</div>
+          <div class="placeholder-subtitle">Lade deine tollen Fotos in den /public/photos Ordner hoch</div>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -158,6 +158,8 @@ export default {
   cursor: pointer;
   background: white;
   transform-style: preserve-3d;
+  display: flex;
+  flex-direction: column;
 }
 
 .photo-item:hover {
@@ -172,14 +174,21 @@ export default {
 .photo-wrapper {
   position: relative;
   width: 100%;
-  height: 250px;
+  min-height: 200px;
+  max-height: 400px;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
 }
 
 .photo-wrapper img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
   transition: all 0.4s ease;
   filter: brightness(1) saturate(1);
 }

@@ -3,7 +3,7 @@
     <button 
       class="music-btn play-pause-btn" 
       @click="$emit('toggle-music')"
-      :title="isPlaying ? 'Pause Music' : 'Play Music'"
+      :title="isPlaying ? 'Musik pausieren' : 'Musik abspielen'"
     >
       {{ isPlaying ? '⏸️' : '▶️' }}
     </button>
@@ -11,7 +11,7 @@
     <button 
       class="music-btn next-btn" 
       @click="$emit('next-song')"
-      title="Next Song"
+      title="Nächstes Lied"
     >
       ⏭️
     </button>
@@ -29,10 +29,10 @@
       />
     </div>
     
-    <div class="now-playing" v-if="currentSong">
+    <div class="now-playing">
       <div class="song-info">
-        <div class="song-title">{{ currentSong.name }}</div>
-        <div class="music-visualizer" v-if="isPlaying">
+        <div class="song-title">{{ currentSong ? currentSong.name : 'Kein Song ausgewählt' }}</div>
+        <div class="music-visualizer" v-if="isPlaying && currentSong">
           <div class="bar" v-for="i in 5" :key="i"></div>
         </div>
       </div>
@@ -42,7 +42,7 @@
       class="music-btn party-btn" 
       @click="togglePartyMode"
       :class="{ active: partyMode }"
-      title="Party Mode!"
+      title="Party-Modus!"
     >
       🎉
     </button>
@@ -58,14 +58,14 @@ export default {
     isPlaying: {
       type: Boolean,
       default: false
-    },
+    }, 
     volume: {
       type: Number,
       default: 0.5
     },
     currentSong: {
       type: Object,
-      default: () => ({ name: 'No Song Selected' })
+      default: null
     }
   },
   emits: ['toggle-music', 'volume-change', 'next-song'],

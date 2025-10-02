@@ -8,6 +8,7 @@
       :title="section.name"
       @click="$emit('scroll-to', index)"
     >
+      <div class="dot-emoji">{{ section.emoji }}</div>
       <div class="dot-label">{{ section.name }}</div>
     </div>
     
@@ -71,16 +72,17 @@ export default {
   right: 20px;
   transform: translateY(-50%);
   z-index: 100;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
-  border-radius: 25px;
-  padding: 15px 8px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  border-radius: 30px;
+  padding: 20px 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 15px;
   transition: all 0.3s ease;
+  border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .scroll-indicator:hover {
@@ -90,26 +92,42 @@ export default {
 
 .scroll-dot {
   position: relative;
-  width: 14px;
-  height: 14px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background: #ddd;
+  background: rgba(255, 255, 255, 0.9);
   transition: all 0.3s ease;
   cursor: pointer;
   border: 2px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .scroll-dot:hover {
-  background: #ff6b6b;
-  transform: scale(1.3);
-  border-color: #fff;
+  background: rgba(255, 107, 107, 0.1);
+  transform: scale(1.2);
+  border-color: #ff6b6b;
+  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.3);
 }
 
 .scroll-dot.active {
-  background: #ff6b6b;
-  transform: scale(1.4);
-  box-shadow: 0 0 15px rgba(255, 107, 107, 0.5);
+  background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+  transform: scale(1.3);
+  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
   border-color: #fff;
+}
+
+.scroll-dot.active .dot-emoji {
+  filter: brightness(1.2);
+  transform: scale(1.1);
+}
+
+.dot-emoji {
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  z-index: 2;
 }
 
 .dot-label {
@@ -159,13 +177,17 @@ export default {
 @media (max-width: 768px) {
   .scroll-indicator {
     right: 10px;
-    padding: 10px 6px;
-    gap: 8px;
+    padding: 15px 8px;
+    gap: 10px;
   }
   
   .scroll-dot {
-    width: 12px;
-    height: 12px;
+    width: 35px;
+    height: 35px;
+  }
+  
+  .dot-emoji {
+    font-size: 1rem;
   }
   
   .dot-label {
@@ -180,13 +202,17 @@ export default {
 @media (max-width: 480px) {
   .scroll-indicator {
     right: 5px;
-    padding: 8px 4px;
-    gap: 6px;
+    padding: 12px 6px;
+    gap: 8px;
   }
   
   .scroll-dot {
-    width: 10px;
-    height: 10px;
+    width: 30px;
+    height: 30px;
+  }
+  
+  .dot-emoji {
+    font-size: 0.9rem;
   }
   
   .scroll-progress {

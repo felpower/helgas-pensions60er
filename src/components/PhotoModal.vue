@@ -19,13 +19,13 @@
           
           <div class="photo-actions">
             <button class="action-button love-btn" @click="toggleLove">
-              {{ isLoved ? '💖 Loved!' : '🤍 Love it!' }}
+              {{ isLoved ? '💖 Geliebt!' : '🤍 Lieben!' }}
             </button>
             <button class="action-button share-btn" @click="sharePhoto">
-              📤 Share
+              📤 Teilen
             </button>
             <button class="action-button download-btn" @click="downloadPhoto">
-              💾 Save
+              💾 Speichern
             </button>
           </div>
           
@@ -33,15 +33,15 @@
           <div class="photo-stats">
             <div class="stat-item">
               <div class="stat-icon">👀</div>
-              <div class="stat-text">{{ viewCount }} views</div>
+              <div class="stat-text">{{ viewCount }} Aufrufe</div>
             </div>
             <div class="stat-item">
               <div class="stat-icon">💖</div>
-              <div class="stat-text">{{ loveCount }} loves</div>
+              <div class="stat-text">{{ loveCount }} Likes</div>
             </div>
             <div class="stat-item">
               <div class="stat-icon">⭐</div>
-              <div class="stat-text">Fabulous!</div>
+              <div class="stat-text">Fabelhaft!</div>
             </div>
           </div>
         </div>
@@ -97,14 +97,14 @@ export default {
     const sharePhoto = () => {
       if (navigator.share) {
         navigator.share({
-          title: 'Amazing photo of Helga!',
+          title: 'Tolles Foto von Helga!',
           text: props.photo.caption,
           url: window.location.href
         })
       } else {
         // Fallback - copy to clipboard
         navigator.clipboard.writeText(window.location.href)
-        showNotification('Link copied to clipboard! 📋')
+        showNotification('Link in Zwischenablage kopiert! 📋')
       }
     }
     
@@ -113,7 +113,7 @@ export default {
       link.href = props.photo.src
       link.download = `helga-photo-${props.photo.id}.jpg`
       link.click()
-      showNotification('Photo saved! 💾')
+      showNotification('Foto gespeichert! 💾')
     }
     
     const createLoveExplosion = () => {
@@ -215,13 +215,17 @@ export default {
 
 .photo-modal {
   position: relative;
-  max-width: 90vw;
-  max-height: 90vh;
+  width: 90vw;
+  height: 90vh;
+  max-width: 1200px;
+  max-height: 800px;
   background: white;
   border-radius: 25px;
   overflow: hidden;
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
   animation: modalSlideIn 0.4s ease-out;
+  display: flex;
+  flex-direction: column;
 }
 
 .close-btn {
@@ -251,19 +255,31 @@ export default {
 .modal-content {
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .photo-container {
   position: relative;
-  max-height: 60vh;
+  flex: 1;
+  height: 500px;
+  max-height: 500px;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+  padding: 20px;
 }
 
 .photo-container img {
-  width: 100%;
+  max-width: 460px;
+  max-height: 460px;
+  width: auto;
   height: auto;
   display: block;
   object-fit: contain;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .modal-effects {
@@ -317,7 +333,11 @@ export default {
 }
 
 .photo-details {
-  padding: 2rem;
+  padding: 1.5rem;
+  flex-shrink: 0;
+  height: 250px;
+  max-height: 250px;
+  overflow-y: auto;
 }
 
 .photo-title {
@@ -466,18 +486,63 @@ export default {
   to { transform: translateX(100%); }
 }
 
+/* Tablet responsive */
+@media (max-width: 1024px) {
+  .photo-modal {
+    width: 95vw;
+    height: 85vh;
+    max-width: 900px;
+    max-height: 700px;
+  }
+  
+  .photo-container {
+    height: 400px;
+    max-height: 400px;
+  }
+  
+  .photo-container img {
+    max-width: 360px;
+    max-height: 360px;
+  }
+  
+  .photo-details {
+    height: 200px;
+    max-height: 200px;
+  }
+}
+
 /* Mobile responsive */
 @media (max-width: 768px) {
   .photo-modal-overlay {
-    padding: 1rem;
+    padding: 0.5rem;
+  }
+  
+  .photo-modal {
+    width: 98vw;
+    height: 95vh;
+    max-width: none;
+    max-height: none;
   }
   
   .modal-content {
     flex-direction: column;
   }
   
+  .photo-container {
+    height: 300px;
+    max-height: 300px;
+    padding: 10px;
+  }
+  
+  .photo-container img {
+    max-width: 280px;
+    max-height: 280px;
+  }
+  
   .photo-details {
-    padding: 1.5rem;
+    padding: 1rem;
+    height: auto;
+    max-height: 250px;
   }
   
   .photo-title {
@@ -504,17 +569,21 @@ export default {
 }
 
 @media (max-width: 480px) {
-  .photo-modal {
-    max-width: 95vw;
-    max-height: 95vh;
+  .photo-container {
+    height: 250px;
+    max-height: 250px;
+    padding: 5px;
   }
   
-  .photo-container {
-    max-height: 50vh;
+  .photo-container img {
+    max-width: 240px;
+    max-height: 240px;
   }
   
   .photo-details {
-    padding: 1rem;
+    padding: 0.8rem;
+    height: auto;
+    max-height: 200px;
   }
   
   .photo-stats {

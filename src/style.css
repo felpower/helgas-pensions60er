@@ -156,8 +156,11 @@ body {
 
 .photo-item img {
   width: 100%;
-  height: 200px;
-  object-fit: cover;
+  height: auto;
+  min-height: 200px;
+  max-height: 400px;
+  object-fit: contain;
+  background: #f8f9fa;
   transition: all 0.3s ease;
 }
 
@@ -308,4 +311,43 @@ body {
 @keyframes party {
   0% { filter: hue-rotate(0deg); }
   100% { filter: hue-rotate(360deg); }
+}
+
+/* Quiz celebration animations */
+@keyframes celebrationFloat {
+  0% {
+    transform: translateY(0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-200px) scale(0) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes unlockCelebration {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* Main website entrance animation */
+.main-website {
+  animation: websiteEntrance 1s ease-out;
+}
+
+@keyframes websiteEntrance {
+  0% {
+    opacity: 0;
+    transform: scale(0.9) translateY(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
