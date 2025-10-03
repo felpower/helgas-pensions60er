@@ -10,6 +10,26 @@
         <div class="quiz-progress" @click="secretSkipQuiz" :title="'Klicke mich für einen geheimen Shortcut... 🤫'">
           Frage {{ currentQuestion + 1 }} von {{ questions.length }}
         </div>
+        
+        <!-- Developer Mode Toggle (versteckt) -->
+        <div class="dev-toggle" @click="toggleDevMode" title="Developer Mode">
+          🔧
+        </div>
+        
+        <!-- Developer Jump Controls -->
+        <div v-if="devMode" class="dev-controls" data-aos="fade-in">
+          <div class="jump-controls">
+            <label>Springe zu Frage:</label>
+            <input 
+              type="number" 
+              v-model.number="jumpToQuestion" 
+              :min="1" 
+              :max="questions.length"
+              class="jump-input"
+            />
+            <button @click="jumpToQuestionFunc" class="jump-btn">Go</button>
+          </div>
+        </div>
       </div>
 
       <!-- Question Card -->
@@ -36,7 +56,7 @@
         </div>
 
         <!-- Text Input Questions -->
-        <div v-else class="answer-input">
+        <div v-else-if="questions[currentQuestion].type === 'text'" class="answer-input">
           <input 
             v-model="textAnswer"
             type="text" 
@@ -52,6 +72,35 @@
           >
             Antworten
           </button>
+        </div>
+
+        <!-- Photo Questions -->
+        <div v-else-if="questions[currentQuestion].type === 'photo'" class="photo-question">
+          <div class="photo-container">
+            <img 
+              :src="questions[currentQuestion].photoSrc" 
+              :alt="questions[currentQuestion].question"
+              class="question-photo"
+            />
+          </div>
+          
+          <div class="photo-options">
+            <button 
+              v-for="(option, index) in questions[currentQuestion].options" 
+              :key="index"
+              class="photo-option-btn"
+              :class="{ 
+                'correct': showResult && option === questions[currentQuestion].correct,
+                'wrong': showResult && selectedAnswer === option && option !== questions[currentQuestion].correct,
+                'selected': selectedAnswer === option
+              }"
+              @click="selectAnswer(option)"
+              :disabled="showResult"
+            >
+              <span class="option-number">{{ index + 1 }}.</span>
+              <span class="option-text">{{ option }}</span>
+            </button>
+          </div>
         </div>
 
         <!-- Result Display -->
@@ -133,7 +182,11 @@ export default {
     const showResult = ref(false)
     const isCorrect = ref(false)
     const correctAnswers = ref(0)
-    const minCorrectAnswers = 4 // Muss mindestens 4 von 6 richtig haben
+    
+    // Developer Mode
+    const devMode = ref(false)
+    const jumpToQuestion = ref(1)
+    const minCorrectAnswers = 4
 
     const questions = ref([
       {
@@ -158,6 +211,20 @@ export default {
         explanation: "Helgas erster Freund war Telefonzellen Ferdl - ein echter Klassiker! ✨"
       },
       {
+        question: "Nun zu einer Schätzfrage. Welche Schuhgröße hat Helgas Sohn Patrick? 👟",
+        type: "multiple",
+        options: ["46", "48", "50", "52", "Ruderbootgröße", "Clownschuh XXL"],
+        correct: "50",
+        explanation: "Patrick trägt tatsächlich Schuhgröße 50 – keine kleinen Füße! 🦶"
+      },
+      {
+        question: "Was für ein Instrument hat Helga in ihrer Jugend gelernt? 🎼",
+        type: "multiple",
+        options: ["Rassel", "Quetschen", "Triangel", "Waschbrett", "Kuhglocke", "Alphorn"],
+        correct: "Quetschen",
+        explanation: "Helga lernte in ihrer Jugend die Quetschen – eine echte Gaudi bei jeder Feier! 🎶"
+      },
+      {
         question: "Wie hieß Helgas Band, als sie ein Kind war? 🎶",
         type: "multiple",
         options: ["Ennstal Spatzen", "Behamberger Madln", "Reitzenberger Dirndl", "Steyrer Sturköpfe", "Kürnberger Buam & Madln"],
@@ -177,6 +244,14 @@ export default {
         options: ["Sie war die jüngste Mitarbeiterin", "Sie war die längstdienende Angestellte", "Sie war die Chefin", "Sie hat dort geheiratet"],
         correct: "Sie war die längstdienende Angestellte",
         explanation: "Über 40 Jahre Treue - das ist wirklich beeindruckend! 👏"
+      },
+      {
+        question: "Auf diesem Bild sind drei Personen zu sehen. Wer davon ist unsere Geburtstagskönigin Helga? 📸",
+        type: "photo",
+        photoSrc: "/photos/vroni/klein.jpg",
+        options: ["Links", "Mitte", "Rechts"],
+        correct: "Links",
+        explanation: "Richtig! Helga ist die Person links im Bild – schon damals ein Hingucker! ✨"
       },
       {
         question: "Welches besondere Alter feiert Helga heute? 🎊",
@@ -212,9 +287,9 @@ export default {
     const checkAnswer = (answer, forceResult = null) => {
       const currentQ = questions.value[currentQuestion.value]
       
-      if (currentQ.type === 'multiple') {
+      if (currentQ.type === 'multiple' || currentQ.type === 'photo') {
         isCorrect.value = answer === currentQ.correct
-      } else {
+      } else if (currentQ.type === 'text') {
         isCorrect.value = forceResult !== null ? forceResult : false
       }
       
@@ -272,6 +347,28 @@ export default {
       setTimeout(() => {
         console.log('🤫 Du hast den geheimen Skip-Button gefunden! Clever! 🎉')
       }, 500)
+    }
+    
+    const toggleDevMode = () => {
+      devMode.value = !devMode.value
+      console.log('🔧 Developer Mode:', devMode.value ? 'AN' : 'AUS')
+    }
+    
+    const jumpToQuestionFunc = () => {
+      if (jumpToQuestion.value >= 1 && jumpToQuestion.value <= questions.value.length) {
+        currentQuestion.value = jumpToQuestion.value - 1
+        selectedAnswer.value = ''
+        textAnswer.value = ''
+        showResult.value = false
+        isCorrect.value = false
+        
+        console.log(`🎯 Springe zu Frage ${jumpToQuestion.value}`)
+        
+        // Reinitialize AOS for new question
+        setTimeout(() => {
+          AOS.refresh()
+        }, 100)
+      }
     }
 
     const createCelebrationEffect = () => {
@@ -342,12 +439,16 @@ export default {
       minCorrectAnswers,
       questions,
       answeredQuestions,
+      devMode,
+      jumpToQuestion,
       selectAnswer,
       checkTextAnswer,
       nextQuestion,
       unlockWebsite,
       restartQuiz,
-      secretSkipQuiz
+      secretSkipQuiz,
+      toggleDevMode,
+      jumpToQuestionFunc
     }
   }
 }
@@ -363,10 +464,12 @@ export default {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   z-index: 10000;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  padding: 2rem;
+  padding: 1rem;
+  padding-top: 2rem;
   overflow-y: auto;
+  min-height: 100vh;
 }
 
 .quiz-container {
@@ -374,20 +477,28 @@ export default {
   width: 100%;
   position: relative;
   padding: 0 1rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 4rem);
+  justify-content: flex-start;
 }
 
 .quiz-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   color: white;
+  position: relative;
+  flex-shrink: 0;
+  padding-top: 1rem;
 }
 
 .quiz-title {
   font-family: 'Fredoka One', cursive;
-  font-size: clamp(1.2rem, 4vw, 3.5rem);
-  margin-bottom: 1rem;
+  font-size: clamp(1.2rem, 4vw, 2.8rem);
+  margin-bottom: 0.8rem;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-  line-height: 1.2;
+  line-height: 1.1;
   word-wrap: break-word;
   overflow-wrap: break-word;
   hyphens: auto;
@@ -396,10 +507,10 @@ export default {
 }
 
 .quiz-subtitle {
-  font-size: clamp(1rem, 3vw, 1.2rem);
-  margin-bottom: 1.5rem;
+  font-size: clamp(0.9rem, 2.8vw, 1.1rem);
+  margin-bottom: 1.2rem;
   opacity: 0.9;
-  line-height: 1.6;
+  line-height: 1.5;
   word-wrap: break-word;
 }
 
@@ -423,11 +534,13 @@ export default {
 .question-card {
   background: white;
   border-radius: 25px;
-  padding: 2.5rem;
+  padding: 2rem;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   position: relative;
   overflow: hidden;
+  flex-grow: 1;
+  min-height: auto;
 }
 
 .question-number {
@@ -824,6 +937,192 @@ export default {
   .quiz-subtitle {
     font-size: clamp(0.6rem, 1.8vw, 0.75rem);
     margin-bottom: 0.8rem;
+  }
+}
+
+/* Photo Question Styling */
+.photo-question {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.photo-container {
+  margin-bottom: 25px;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  background: white;
+  padding: 10px;
+}
+
+.question-photo {
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 10px;
+  display: block;
+}
+
+.photo-options {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+}
+
+.photo-option-btn {
+  background: linear-gradient(135deg, #e8f5ff, #b3e0ff);
+  color: #2c3e50;
+  border: 2px solid #74b9ff;
+  border-radius: 20px;
+  padding: 12px 25px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(116, 185, 255, 0.2);
+  min-width: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.photo-option-btn:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 25px rgba(116, 185, 255, 0.3);
+  background: linear-gradient(135deg, #74b9ff, #0984e3);
+  color: white;
+}
+
+.photo-option-btn.selected {
+  background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+  border-color: #e17055;
+  color: #2d3436;
+}
+
+.photo-option-btn.correct {
+  background: linear-gradient(135deg, #55a3ff, #74b9ff) !important;
+  border-color: #0984e3 !important;
+  color: white !important;
+  animation: correctPulse 0.8s ease-in-out;
+}
+
+.photo-option-btn.wrong {
+  background: linear-gradient(135deg, #ff7675, #e84393) !important;
+  border-color: #d63031 !important;
+  color: white !important;
+  animation: wrongShake 0.6s ease-in-out;
+}
+
+.option-number {
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.option-text {
+  font-weight: 600;
+}
+
+/* Mobile responsiveness for photo questions */
+@media (max-width: 768px) {
+  .photo-container {
+    margin-bottom: 20px;
+    padding: 8px;
+  }
+  
+  .question-photo {
+    max-height: 300px;
+  }
+  
+  .photo-option-btn {
+    font-size: 16px;
+    padding: 10px 20px;
+    min-width: 180px;
+  }
+  
+  .option-number {
+    font-size: 18px;
+  }
+}
+
+/* Developer Mode Styling */
+.dev-toggle {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+  user-select: none;
+}
+
+.dev-toggle:hover {
+  opacity: 1;
+}
+
+.dev-controls {
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 10px;
+  padding: 15px;
+  margin-top: 15px;
+  backdrop-filter: blur(10px);
+}
+
+.jump-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.jump-controls label {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.jump-input {
+  width: 60px;
+  padding: 5px 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.jump-btn {
+  background: linear-gradient(135deg, #74b9ff, #0984e3);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.jump-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(116, 185, 255, 0.3);
+}
+
+@media (max-width: 480px) {
+  .question-photo {
+    max-height: 250px;
+  }
+  
+  .photo-option-btn {
+    font-size: 14px;
+    padding: 8px 15px;
+    min-width: 150px;
+  }
+  
+  .option-number {
+    font-size: 16px;
   }
 }
 </style>

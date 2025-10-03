@@ -28,22 +28,6 @@
               💾 Speichern
             </button>
           </div>
-          
-          <!-- Fun stats -->
-          <div class="photo-stats">
-            <div class="stat-item">
-              <div class="stat-icon">👀</div>
-              <div class="stat-text">{{ viewCount }} Aufrufe</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-icon">💖</div>
-              <div class="stat-text">{{ loveCount }} Likes</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-icon">⭐</div>
-              <div class="stat-text">Fabelhaft!</div>
-            </div>
-          </div>
         </div>
       </div>
       
@@ -203,7 +187,7 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(10px);
   z-index: 9999;
   display: flex;
@@ -260,9 +244,9 @@ export default {
 
 .photo-container {
   position: relative;
-  flex: 1;
-  height: 500px;
-  max-height: 500px;
+  flex: 2;
+  height: 70vh;
+  max-height: 70vh;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -272,8 +256,8 @@ export default {
 }
 
 .photo-container img {
-  max-width: 460px;
-  max-height: 460px;
+  max-width: 100%;
+  max-height: 100%;
   width: auto;
   height: auto;
   display: block;
@@ -333,17 +317,19 @@ export default {
 }
 
 .photo-details {
-  padding: 1.5rem;
+  padding: 1rem;
   flex-shrink: 0;
-  height: 250px;
-  max-height: 250px;
+  height: auto;
+  min-height: 120px;
+  max-height: 25vh;
   overflow-y: auto;
+  text-align: center;
 }
 
 .photo-title {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   color: #333;
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
   text-align: center;
   font-weight: bold;
 }
@@ -351,17 +337,18 @@ export default {
 .photo-year {
   background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
   color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
   display: inline-block;
   font-weight: bold;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
 }
 
 .photo-actions {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
   flex-wrap: wrap;
   justify-content: center;
 }
@@ -370,13 +357,13 @@ export default {
   background: linear-gradient(45deg, #667eea, #764ba2);
   color: white;
   border: none;
-  padding: 0.8rem 1.5rem;
-  border-radius: 25px;
-  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .action-button:hover {
@@ -395,7 +382,7 @@ export default {
 .download-btn {
   background: linear-gradient(45deg, #45b7d1, #96c93d);
 }
-
+/* 
 .photo-stats {
   display: flex;
   justify-content: space-around;
@@ -417,7 +404,7 @@ export default {
   font-size: 0.9rem;
   color: #666;
   font-weight: bold;
-}
+} */
 
 .nav-arrow {
   position: absolute;
@@ -435,11 +422,11 @@ export default {
 }
 
 .prev-arrow {
-  left: -25px;
+  left: 25px;
 }
 
 .next-arrow {
-  right: -25px;
+  right: 25px;
 }
 
 .nav-arrow:hover {
@@ -506,8 +493,8 @@ export default {
   }
   
   .photo-details {
-    height: 200px;
-    max-height: 200px;
+    height: 100px;
+    max-height: 100px;
   }
 }
 
@@ -542,7 +529,7 @@ export default {
   .photo-details {
     padding: 1rem;
     height: auto;
-    max-height: 250px;
+    max-height: 150px;
   }
   
   .photo-title {
@@ -583,7 +570,7 @@ export default {
   .photo-details {
     padding: 0.8rem;
     height: auto;
-    max-height: 200px;
+    max-height: 100px;
   }
   
   .photo-stats {

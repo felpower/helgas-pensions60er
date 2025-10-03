@@ -17,7 +17,7 @@
           @error="handleImageError(photo)"
         />
         
-        <div class="photo-overlay">
+        <!-- <div class="photo-overlay">
           <div class="photo-year" v-if="photo.year">{{ photo.year }}</div>
           <div class="photo-actions">
             <button class="action-btn zoom-btn" title="In voller Größe anzeigen">
@@ -27,9 +27,9 @@
               {{ photo.loved ? '💖' : '🤍' }}
             </button>
           </div>
-        </div>
-      </div>
-      
+        </div> -->
+
+      </div>      
       <div class="photo-caption">
         <p>{{ photo.caption }}</p>
       </div>

@@ -94,7 +94,7 @@
         <h2 class="section-title">🎤 Helgas größte Auftritte 🎵</h2>
         <div class="story-text" data-aos="slide-up">
           <p>Die Bühne war schon immer ihr zweites Zuhause! 🎭</p>
-          <p>Vom örtlichen Theater bis zu Gemeindeveranstaltungen - Helgas Stimme hat unzählige Herzen erfreut! ✨🎶</p>
+          <p>Vom örtlichen Wirtshaus bis zum Musikanten und Silvesterstadl - Helgas Stimme hat unzählige Herzen erfreut! ✨🎶</p>
         </div>
         
         <VideoPlayer 
@@ -215,10 +215,11 @@ export default {
 
     // Sample data - you'll replace these with your actual content
     const songs = ref([
-    { name: "Alles gute zum Geburtstag", src: "/audio/alles_gute_zum_geburtstag.mp3" },
+      { name: "Alles gute zum Geburtstag", src: "/audio/alles_gute_zum_geburtstag.mp3" },
       { name: "Der Frohe Wanderer", src: "/audio/der_frohe_wanderer.mp3" },
-      
-      
+      { name: "Heimaterinnerung", src: "/audio/heimaterinnerung.mp3" },
+      { name: "Hoch von den Bergen", src: "/audio/hoch_von_den_bergen.mp3" },
+      { name: "Tritsch Tratsch", src: "/audio/Tritsch_Tratsch.mp3" },
     ])
 
     const sections = ref([
@@ -235,13 +236,15 @@ export default {
     const earlyYearsPhotos = ref([
       { id: 1, src: '/photos/early/HelgaUndArny1.jpg', caption: 'Baby Helga - einfach zum Verlieben! 👶' },
       { id: 2, src: '/photos/early/HelgaUndArny2.jpg', caption: 'Erste Schritte ins Großartige! 👣' },
-      { id: 3, src: '/photos/early/HelgaUndArny1.jpg', caption: 'Helga und ihr Idol, der Arny 📚' }
+      { id: 3, src: '/photos/early/HelgaUndArny3.jpg', caption: 'Helga und ihr Idol, der Arny 📚' }
     ])
 
     const youngAdultPhotos = ref([
-      { id: 4, src: '/photos/young/Tritsch_Tratsch.png', caption: 'Mode-Ikone in Entstehung! 💃' },
-      { id: 5, src: '/videos/1002.gif', caption: 'Das Leben in vollen Zügen genießen! ✨' },
-      { id: 6, src: '/photos/young/photo3.jpg', caption: 'Abenteuerzeit! 🌍' }
+      { id: 4, src: '/photos/vroni/Klein.jpg', caption: 'Von kleinauf schon ein Hingucker! 👶' },
+      { id: 5, src: '/photos/vroni/Blumen.jpg', caption: 'Auch oben auf den Tischen wurde gesungen! ✨' },
+      { id: 6, src: '/photos/vroni/Dirndl.jpg', caption: 'Jede Gaststube wurde zur Bühne! 🌍' },
+       { id: 7, src: '/photos/vroni/CD.jpg', caption: 'Die erste CD! 🌍' },
+      { id: 8, src: '/photos/vroni/Auszeichnung.jpg', caption: 'Auch diverse Auszeichnungen dürfen nicht fehlen! 🏆' }
     ])
 
     const familyPhotos = ref([
