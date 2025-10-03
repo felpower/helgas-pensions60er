@@ -63,10 +63,10 @@
 
       <!-- Young Adult Adventures -->
       <section id="young-adult" class="section" data-aos="fade-left">
-        <h2 class="section-title">🌟 Jung & Wild 🌟</h2>
+        <h2 class="section-title">🌟Der Anfang von etwas ganz großem🌟</h2>
         <div class="story-text" data-aos="flip-right">
-          <p>Die Jahre, in denen Helga die Welt eroberte, ein Abenteuer nach dem anderen!</p>
-          <p>Mode-Ikone, Trendsetterin und rundherum fantastischer Mensch! ✨</p>
+          <p>Die Jahre, in denen Helga die Welt eroberte, ein Musikalisches Abenteuer nach dem anderen!</p>
+          <p>Die Reitzenberger Dirndln überall auf Tour! ✨</p>
         </div>
         <PhotoGrid 
           :photos="youngAdultPhotos" 
@@ -107,7 +107,7 @@
 
       <!-- Recent Years Section -->
       <section id="recent-years" class="section" data-aos="fade-up">
-        <h2 class="section-title">🎭 Die goldenen Jahre 🎭</h2>
+        <h2 class="section-title">🎉 Die goldenen Party Jahre 🥳</h2>
         <div class="story-text" data-aos="slide-right">
           <p>Neue Abenteuer, neue Hobbys und der Beweis, dass 60 das neue 30 ist!</p>
           <p>Immer noch fabelhaft, immer noch erstaunlich, immer noch unser Lieblingsmensch! 🌟</p>
@@ -232,31 +232,36 @@ export default {
       { id: 'birthday-wishes', name: 'Geburtstag!', emoji: '🎂' }
     ])
 
-    // Beispiel-Fotodaten - ersetze diese mit deinen echten Fotos
     const earlyYearsPhotos = ref([
-      { id: 1, src: '/photos/early/HelgaUndArny1.jpg', caption: 'Baby Helga - einfach zum Verlieben! 👶' },
-      { id: 2, src: '/photos/early/HelgaUndArny2.jpg', caption: 'Erste Schritte ins Großartige! 👣' },
-      { id: 3, src: '/photos/early/HelgaUndArny3.jpg', caption: 'Helga und ihr Idol, der Arny 📚' }
+      { id: 1, src: '/photos/early/Babies.jpg', caption: 'Baby Helga und Vroni - einfach zum Verlieben! 👶' },
+      { id: 2, src: '/photos/early/MitBlume.jpg', caption: 'Erste Schritte ins Großartige! 👣' },
+      { id: 3, src: '/photos/early/HelgaUndArny1.jpg', caption: 'Helga und ihr Idol, der Arny 📚' }
     ])
 
     const youngAdultPhotos = ref([
       { id: 4, src: '/photos/vroni/Klein.jpg', caption: 'Von kleinauf schon ein Hingucker! 👶' },
       { id: 5, src: '/photos/vroni/Blumen.jpg', caption: 'Auch oben auf den Tischen wurde gesungen! ✨' },
+      { id: 7, src: '/photos/vroni/CD.jpg', caption: 'Die erste CD! 🌍' },
+      { id: 10, src: '/photos/vroni/AlbumCoverDeisenbach.png', caption: 'Ein weiteres Album Cover dieses mal beim Deisenbach oben! 📸' },
       { id: 6, src: '/photos/vroni/Dirndl.jpg', caption: 'Jede Gaststube wurde zur Bühne! 🌍' },
-       { id: 7, src: '/photos/vroni/CD.jpg', caption: 'Die erste CD! 🌍' },
-      { id: 8, src: '/photos/vroni/Auszeichnung.jpg', caption: 'Auch diverse Auszeichnungen dürfen nicht fehlen! 🏆' }
+
+      { id: 8, src: '/photos/vroni/Auszeichnung.jpg', caption: 'Auch diverse Auszeichnungen dürfen nicht fehlen! 🏆' },
+      { id: 9, src: '/photos/vroni/DirndlBaWArni.png', caption: 'Auch mit Prominenten dürfen ein paar Fotos nicht fehlen! 💃' },
+      { id: 11, src: '/photos/vroni/VormKamin.jpg', caption: 'Ein unvergesslicher Live-Auftritt mit den Reitzenden Reitzenberger Dirndln! 🎤' }
     ])
 
     const familyPhotos = ref([
-      { id: 7, src: '/photos/family/photo1.jpg', caption: 'Die beste Mama der Welt! 👩‍👧‍👦' },
-      { id: 8, src: '/photos/family/photo2.jpg', caption: 'Familienurlaub-Erinnerungen! 🏖️' },
-      { id: 9, src: '/photos/family/photo3.jpg', caption: 'Magische Momente schaffen! ✨' }
+      { id: 7, src: '/photos/family/baden.jpg', caption: 'Der eigene Pool zuhause, einfach eine Oase der Ruhe! 👩‍👧‍👦' },
+      { id: 8, src: '/photos/family/BadenStrandArni.jpg', caption: 'Urlaub am Strand mit der Family, jedes Jahr wieder gerne! 🏖️' },
+      { id: 9, src: '/photos/family/SkiWMAlm.jpg', caption: 'Magische Momente bei der Musikanten Ski WM am Berg auf der Alm! ⛷️' },
+      { id: 10, src: '/photos/family/WienerAdvent.jpg', caption: 'Auch beim Punsch trinken is die Helga immer dabei! 🍷' }
     ])
 
     const recentPhotos = ref([ 
-      { id: 10, src: '/photos/recent/photo1.jpg', caption: 'Mit 59 immer noch fabelhaft! 💅'},
-      { id: 11, src: '/photos/recent/photo2.jpg', caption: 'Neue Abenteuer warten! 🌟'},
-      { id: 12, src: '/photos/recent/photo3.jpg', caption: 'Bereit für die 60! 🎉' }
+      { id: 10, src: '/photos/party/WoodstockDahoam.jpg', caption: 'Woodstock der Blasmusik dahoam! 💅'},
+      { id: 11, src: '/photos/party/ImBumsBus.jpg', caption: 'Am Ende noch den Bums Bus ausgeräumt! 🌟'},
+      { id: 12, src: '/photos/party/Zeltfest.jpg', caption: 'Jedes Zeltfest ist immer a Hit' },
+      { id: 13, src: '/photos/party/HelgaVollsuff.jpg', caption: 'Helga in Partylaune! 🥳' }
     ])
 
      const familyVideos = ref([

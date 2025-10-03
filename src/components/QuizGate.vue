@@ -363,6 +363,21 @@ export default {
         explanation: "Über 40 Jahre Treue - das ist wirklich beeindruckend! 👏"
       },
       {
+        question: "Welche Position hat Helga beim Musikverein Kleinraming? 🎺",
+        type: "multiple",
+        options: ["Kassiererin", "Schriftführerin", "Trommelpolierin", "Kuchenbeauftragte", "Schnapsdrossel"],
+        correct: "Schriftführerin",
+        explanation: "Helga ist beim Musikverein Kleinraming die Schriftführerin – Protokolle mit Schmäh garantiert! 📝😄"
+      },
+      {
+        question: "Auf diesem Bild sind 2 kleine Reitzis zu sehen. Wer davon ist unsere Geburtstagskönigin? 📸",
+        type: "photo",
+        photoSrc: "/photos/early/Babies.jpg",
+        options: ["Links", "Rechts"],
+        correct: "Rechts",
+        explanation: "Helga ist die Person rechts im Bild – so eine süße Maus! 🐁"
+      },
+      {
         question: "Auf diesem Bild sind drei Personen zu sehen. Wer davon ist unsere Geburtstagskönigin? 📸",
         type: "photo",
         photoSrc: "/photos/vroni/Klein.jpg",
