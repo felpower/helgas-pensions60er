@@ -1,94 +1,96 @@
 <template>
   <div class="quiz-gate" v-if="!isUnlocked">
     <div class="quiz-container">
-      <!-- Header -->
-      <div class="quiz-header" data-aos="fade-down">
-        <h1 class="quiz-title">🎂 Willkommen zur Geburtstagsfeier! 🎉</h1>
-        <p class="quiz-subtitle">
-          Bevor wir mit der Feier beginnen können, müsst ihr beweisen, dass ihr unsere Helga wirklich kennt! 😄
-        </p>
-        <div class="quiz-progress" @click="secretSkipQuiz" :title="'Klicke mich für einen geheimen Shortcut... 🤫'">
-          Frage {{ currentQuestion + 1 }} von {{ questions.length }}
-        </div>
-        
-        <!-- Developer Mode Toggle (versteckt) -->
-        <div class="dev-toggle" @click="toggleDevMode" title="Developer Mode">
-          🔧
-        </div>
-        
-        <!-- Developer Jump Controls -->
-        <div v-if="devMode" class="dev-controls" data-aos="fade-in">
-          <div class="jump-controls">
-            <label>Springe zu Frage:</label>
-            <input 
-              type="number" 
-              v-model.number="jumpToQuestion" 
-              :min="1" 
-              :max="questions.length"
-              class="jump-input"
-            />
-            <button @click="jumpToQuestionFunc" class="jump-btn">Go</button>
+      <!-- Intro Slides -->
+      <div v-if="showIntro" class="intro-wrapper" data-aos="fade-up">
+        <div class="intro-slide">
+          <h1 class="intro-title">{{ introSlides[currentSlide].title }}</h1>
+          <ul class="intro-lines">
+            <li v-for="(line, idx) in introSlides[currentSlide].lines" :key="idx" data-aos="fade-left" :data-aos-delay="idx * 150">
+              {{ line }}
+            </li>
+          </ul>
+          <div class="intro-footer" data-aos="fade-in" data-aos-delay="500">{{ introSlides[currentSlide].footer }}</div>
+          <!-- Developer Mode Toggle (versteckt) -->
+          <div class="dev-toggle" @click="toggleDevMode" title="Developer Mode">
+            🔧
           </div>
+          <div v-if="devMode" class="dev-controls" data-aos="fade-in">
+            <div class="jump-controls">
+              <label>Quiz überspringen?</label>
+              <button @click="secretSkipQuiz" class="jump-btn">Skip</button>
+            </div>
+          </div>
+          <div class="intro-navigation">
+            <button class="nav-btn prev" @click="prevIntroSlide" :disabled="currentSlide === 0">← Zurück</button>
+            <div class="dots">
+              <span 
+                v-for="(s, i) in introSlides" 
+                :key="i" 
+                class="dot" 
+                :class="{ active: i === currentSlide }"
+                @click="currentSlide = i"
+              ></span>
+            </div>
+            <button 
+              v-if="currentSlide < introSlides.length - 1" 
+              class="nav-btn next" 
+              @click="nextIntroSlide"
+            >Weiter →</button>
+            <button 
+              v-else 
+              class="start-btn" 
+              @click="startQuiz"
+            >🎯 Quiz starten</button>
+          </div>
+          <div class="intro-hint">Tipp: Pfeiltasten oder Enter benutzen</div>
         </div>
       </div>
 
-      <!-- Question Card -->
-      <div class="question-card" data-aos="zoom-in" :key="currentQuestion">
-        <div class="question-number">{{ currentQuestion + 1 }}</div>
-        <h2 class="question-text">{{ questions[currentQuestion].question }}</h2>
-        
-        <!-- Multiple Choice Questions -->
-        <div v-if="questions[currentQuestion].type === 'multiple'" class="answer-options">
-          <button 
-            v-for="(option, index) in questions[currentQuestion].options" 
-            :key="index"
-            class="answer-btn"
-            :class="{ 
-              'correct': showResult && option === questions[currentQuestion].correct,
-              'wrong': showResult && selectedAnswer === option && option !== questions[currentQuestion].correct,
-              'selected': selectedAnswer === option
-            }"
-            @click="selectAnswer(option)"
-            :disabled="showResult"
-          >
-            <span class="answer-number">{{ index + 1 }}.</span> {{ option }}
-          </button>
-        </div>
-
-        <!-- Text Input Questions -->
-        <div v-else-if="questions[currentQuestion].type === 'text'" class="answer-input">
-          <input 
-            v-model="textAnswer"
-            type="text" 
-            class="text-input"
-            :placeholder="questions[currentQuestion].placeholder"
-            @keyup.enter="checkTextAnswer"
-            :disabled="showResult"
-          />
-          <button 
-            class="submit-btn" 
-            @click="checkTextAnswer"
-            :disabled="showResult || !textAnswer.trim()"
-          >
-            Antworten
-          </button>
-        </div>
-
-        <!-- Photo Questions -->
-        <div v-else-if="questions[currentQuestion].type === 'photo'" class="photo-question">
-          <div class="photo-container">
-            <img 
-              :src="questions[currentQuestion].photoSrc" 
-              :alt="questions[currentQuestion].question"
-              class="question-photo"
-            />
+      <!-- Original Quiz Content -->
+      <div v-else>
+        <!-- Header -->
+        <div class="quiz-header" data-aos="fade-down">
+          <h1 class="quiz-title">🎂 Willkommen zur Geburtstagsfeier! 🎉</h1>
+          <p class="quiz-subtitle">
+            Bevor wir mit der Geschenksübergabe beginnen können, müsst ihr beweisen, dass ihr unsere Helga wirklich kennt! Minimum 50% der Fragen müssen richtig beantwortet werden, sonst bekommt unsere Helga kein Geschenk. 😄
+          </p>
+          <div class="quiz-progress" @click="secretSkipQuiz" :title="'Klicke mich für einen geheimen Shortcut... 🤫'">
+            Frage {{ currentQuestion + 1 }} von {{ questions.length }}
           </div>
           
-          <div class="photo-options">
+          <!-- Developer Mode Toggle (versteckt) -->
+          <div class="dev-toggle" @click="toggleDevMode" title="Developer Mode">
+            🔧
+          </div>
+          
+          <!-- Developer Jump Controls -->
+          <div v-if="devMode" class="dev-controls" data-aos="fade-in">
+            <div class="jump-controls">
+              <label>Springe zu Frage:</label>
+              <input 
+                type="number" 
+                v-model.number="jumpToQuestion" 
+                :min="1" 
+                :max="questions.length"
+                class="jump-input"
+              />
+              <button @click="jumpToQuestionFunc" class="jump-btn">Go</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Question Card -->
+        <div class="question-card" data-aos="zoom-in" :key="currentQuestion">
+          <div class="question-number">{{ currentQuestion + 1 }}</div>
+          <h2 class="question-text">{{ questions[currentQuestion].question }}</h2>
+          
+          <!-- Multiple Choice Questions -->
+          <div v-if="questions[currentQuestion].type === 'multiple'" class="answer-options">
             <button 
               v-for="(option, index) in questions[currentQuestion].options" 
               :key="index"
-              class="photo-option-btn"
+              class="answer-btn"
               :class="{ 
                 'correct': showResult && option === questions[currentQuestion].correct,
                 'wrong': showResult && selectedAnswer === option && option !== questions[currentQuestion].correct,
@@ -97,70 +99,117 @@
               @click="selectAnswer(option)"
               :disabled="showResult"
             >
-              <span class="option-number">{{ index + 1 }}.</span>
-              <span class="option-text">{{ option }}</span>
+              <span class="answer-number">{{ index + 1 }}.</span> {{ option }}
+            </button>
+          </div>
+
+          <!-- Text Input Questions -->
+          <div v-else-if="questions[currentQuestion].type === 'text'" class="answer-input">
+            <input 
+              v-model="textAnswer"
+              type="text" 
+              class="text-input"
+              :placeholder="questions[currentQuestion].placeholder"
+              @keyup.enter="checkTextAnswer"
+              :disabled="showResult"
+            />
+            <button 
+              class="submit-btn" 
+              @click="checkTextAnswer"
+              :disabled="showResult || !textAnswer.trim()"
+            >
+              Antworten
+            </button>
+          </div>
+
+          <!-- Photo Questions -->
+          <div v-else-if="questions[currentQuestion].type === 'photo'" class="photo-question">
+            <div class="photo-container">
+              <img 
+                :src="questions[currentQuestion].photoSrc" 
+                :alt="questions[currentQuestion].question"
+                class="question-photo"
+              />
+            </div>
+            
+            <div class="photo-options">
+              <button 
+                v-for="(option, index) in questions[currentQuestion].options" 
+                :key="index"
+                class="photo-option-btn"
+                :class="{ 
+                  'correct': showResult && option === questions[currentQuestion].correct,
+                  'wrong': showResult && selectedAnswer === option && option !== questions[currentQuestion].correct,
+                  'selected': selectedAnswer === option
+                }"
+                @click="selectAnswer(option)"
+                :disabled="showResult"
+              >
+                <span class="option-number">{{ index + 1 }}.</span>
+                <span class="option-text">{{ option }}</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Result Display -->
+          <div v-if="showResult" class="result-display">
+            <div v-if="isCorrect" class="correct-result">
+              <div class="result-icon">🎉</div>
+              <div class="result-text">Richtig! {{ questions[currentQuestion].explanation }}</div>
+            </div>
+            <div v-else class="wrong-result">
+              <div class="result-icon">😅</div>
+              <div class="result-text">
+                Nicht ganz! {{ questions[currentQuestion].explanation }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Navigation -->
+          <div class="quiz-navigation" v-if="showResult">
+            <button 
+              v-if="currentQuestion < questions.length - 1" 
+              class="next-btn"
+              @click="nextQuestion"
+            >
+              Nächste Frage →
+            </button>
+            <button 
+              v-else-if="correctAnswers >= minCorrectAnswers" 
+              class="unlock-btn"
+              @click="unlockWebsite"
+            >
+              🎊 Zur Geburtstagsfeier! 🎊
+            </button>
+            <button 
+              v-else 
+              class="retry-btn"
+              @click="restartQuiz"
+            >
+              Nochmal versuchen 🔄
             </button>
           </div>
         </div>
 
-        <!-- Result Display -->
-        <div v-if="showResult" class="result-display">
-          <div v-if="isCorrect" class="correct-result">
-            <div class="result-icon">🎉</div>
-            <div class="result-text">Richtig! {{ questions[currentQuestion].explanation }}</div>
+        <!-- Score Display -->
+        <div class="score-display" data-aos="fade-up">
+          <div class="score-item">
+            <span class="score-label">Richtige Antworten:</span>
+            <span class="score-value">{{ correctAnswers }} / {{ answeredQuestions }}</span>
           </div>
-          <div v-else class="wrong-result">
-            <div class="result-icon">😅</div>
-            <div class="result-text">
-              Nicht ganz! {{ questions[currentQuestion].explanation }}
-            </div>
+          <div class="progress-bar">
+            <div 
+              class="progress-fill" 
+              :style="{ width: (answeredQuestions / questions.length) * 100 + '%' }"
+            ></div>
           </div>
         </div>
 
-        <!-- Navigation -->
-        <div class="quiz-navigation" v-if="showResult">
-          <button 
-            v-if="currentQuestion < questions.length - 1" 
-            class="next-btn"
-            @click="nextQuestion"
-          >
-            Nächste Frage →
-          </button>
-          <button 
-            v-else-if="correctAnswers >= minCorrectAnswers" 
-            class="unlock-btn"
-            @click="unlockWebsite"
-          >
-            🎊 Zur Geburtstagsfeier! 🎊
-          </button>
-          <button 
-            v-else 
-            class="retry-btn"
-            @click="restartQuiz"
-          >
-            Nochmal versuchen 🔄
-          </button>
-        </div>
-      </div>
-
-      <!-- Score Display -->
-      <div class="score-display" data-aos="fade-up">
-        <div class="score-item">
-          <span class="score-label">Richtige Antworten:</span>
-          <span class="score-value">{{ correctAnswers }} / {{ answeredQuestions }}</span>
-        </div>
-        <div class="progress-bar">
-          <div 
-            class="progress-fill" 
-            :style="{ width: (answeredQuestions / questions.length) * 100 + '%' }"
-          ></div>
-        </div>
-      </div>
-
-      <!-- Fun decorations -->
-      <div class="quiz-decorations">
-        <div class="floating-emoji" v-for="i in 8" :key="i">
-          {{ ['🎂', '🎉', '🎊', '🎈', '🎁', '🌟', '💖', '🎭'][i-1] }}
+        <!-- Fun decorations -->
+        <div class="quiz-decorations">
+          <div class="floating-emoji" v-for="i in 8" :key="i">
+            {{ ['🎂', '🎉', '🎊', '🎈', '🎁', '🌟', '💖', '🎭'][i-1] }}
+          </div>
         </div>
       </div>
     </div>
@@ -168,7 +217,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import AOS from 'aos'
 
 export default {
@@ -186,7 +235,75 @@ export default {
     // Developer Mode
     const devMode = ref(false)
     const jumpToQuestion = ref(1)
-    const minCorrectAnswers = 4
+    const minCorrectAnswers = 1
+
+    // Intro Slides state
+    const showIntro = ref(true)
+    const currentSlide = ref(0)
+    const introSlides = ref([
+      {
+        title: '🎉 Willkommen zu einem ganz besonderen Abend! 🎉',
+        lines: [
+          'Heute feiern wir nicht nur irgendeinen Geburtstag...',
+          '...wir feiern HELGAS fantastischen 60. Geburtstag! 🎂',
+          'UND – sie geht in die Pension! 👏'
+        ],
+        footer: 'Doppelt Grund zum Feiern! 🥂'
+      },
+      {
+        title: 'Warum wir heute hier sind:',
+        lines: [
+          'Um Helga zu feiern – 60 Jahre voller Leben, Musik und Liebe ❤️',
+          'Um ihre unglaubliche Reise zu würdigen – Familie, Freunde, Erinnerungen',
+          'Und um den Start in ihren neuen Lebensabschnitt zu zelebrieren 🕊️'
+        ],
+        footer: 'Sie hat es sich verdient! ✨'
+      },
+      {
+        title: 'ABER... 🎁',
+        lines: [
+          'Die Geschenke werden NICHT einfach so hergegeben!',
+          'Ihr müsst zuerst beweisen, dass ihr Helga wirklich kennt! 😎',
+          'Mindestens 50% der Fragen richtig – sonst KEINE Geschenke! 😱'
+        ],
+        footer: 'Challenge accepted? 💪'
+      },
+      {
+        title: 'Wie es funktioniert:',
+        lines: [
+          'Ihr bekommt Fragen über Helga – aus allen Lebensphasen',
+          'Manchmal Multiple Choice, manchmal zum Raten... vielleicht sogar mit Bildern 😉',
+          'Antworten auswählen – Ergebnis sehen – weiter zur nächsten'
+        ],
+        footer: 'Klingt einfach? Wir werden sehen... 😏'
+      },
+      {
+        title: 'Seid ihr bereit? 🎤',
+        lines: [
+          'Dann lasst uns herausfinden: Wer kennt Helga WIRKLICH?',
+          'Teamwork ausdrücklich erwünscht – aber kein Google! 😂',
+          'Los geht‘s!'
+        ],
+        footer: '👉 Drücke „Quiz starten“'
+      }
+    ])
+
+    const nextIntroSlide = () => {
+      if (currentSlide.value < introSlides.value.length - 1) {
+        currentSlide.value++
+      }
+    }
+
+    const prevIntroSlide = () => {
+      if (currentSlide.value > 0) {
+        currentSlide.value--
+      }
+    }
+
+    const startQuiz = () => {
+      showIntro.value = false
+      setTimeout(() => AOS.refresh(), 50)
+    }
 
     const questions = ref([
       {
@@ -204,11 +321,11 @@ export default {
         explanation: "Am 30. September 1965 wurde unsere wunderbare Helga geboren! 🎂"
       },
       {
-        question: "Wie hieß Helgas erster Freund mit Spitznamen? 👑",
+        question: "Wie hieß Helgas erster Freund? 👑",
         type: "multiple",
-        options: ["Parkbank Sepp", "Jukebox Hansi", "Telefonzellen Ferdl", "Würstelstand Karl", "Kaugummiautomat Rudi"],
-        correct: "Telefonzellen Ferdl",
-        explanation: "Helgas erster Freund war Telefonzellen Ferdl - ein echter Klassiker! ✨"
+        options: ["Parkbank Herbert", "Jukebox Hansi","Burberger Sepp", "Telefonzellen Ferdl", "Würstelstand Karl", "Kaugummiautomat Rudi"],
+        correct: "Burberger Sepp",
+        explanation: "Helgas erster Freund war da Burberger Sepp, danach kam erst der Telefonzellen Ferdl - ein echter Klassiker! ✨"
       },
       {
         question: "Nun zu einer Schätzfrage. Welche Schuhgröße hat Helgas Sohn Patrick? 👟",
@@ -220,9 +337,9 @@ export default {
       {
         question: "Was für ein Instrument hat Helga in ihrer Jugend gelernt? 🎼",
         type: "multiple",
-        options: ["Rassel", "Quetschen", "Triangel", "Waschbrett", "Kuhglocke", "Alphorn"],
-        correct: "Quetschen",
-        explanation: "Helga lernte in ihrer Jugend die Quetschen – eine echte Gaudi bei jeder Feier! 🎶"
+        options: ["Mexikanische Rassel", "Steirische Quetschen", "Burgenländer Triangel", "Französisches Waschbrett", "Tiroler Kuhglocke", "Voralberger Alphorn"],
+        correct: "Steirische Quetschen",
+        explanation: "Helga lernte in ihrer Jugend die Steirische Quetschen – eine echte Gaudi bei jeder Feier! 🎶"
       },
       {
         question: "Wie hieß Helgas Band, als sie ein Kind war? 🎶",
@@ -246,12 +363,12 @@ export default {
         explanation: "Über 40 Jahre Treue - das ist wirklich beeindruckend! 👏"
       },
       {
-        question: "Auf diesem Bild sind drei Personen zu sehen. Wer davon ist unsere Geburtstagskönigin Helga? 📸",
+        question: "Auf diesem Bild sind drei Personen zu sehen. Wer davon ist unsere Geburtstagskönigin? 📸",
         type: "photo",
-        photoSrc: "/photos/vroni/klein.jpg",
+        photoSrc: "/photos/vroni/Klein.jpg",
         options: ["Links", "Mitte", "Rechts"],
         correct: "Links",
-        explanation: "Richtig! Helga ist die Person links im Bild – schon damals ein Hingucker! ✨"
+        explanation: "Helga ist die Person links im Bild – schon damals ein Hingucker! ✨"
       },
       {
         question: "Welches besondere Alter feiert Helga heute? 🎊",
@@ -426,8 +543,71 @@ export default {
         duration: 800,
         easing: 'ease-in-out'
       })
+
+      // Keyboard navigation for intro slides & quiz (Presenter support)
+      const keyHandler = (e) => {
+        const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : ''
+        if (tag === 'input' || tag === 'textarea') return
+        
+        // Normalize keys
+        const key = e.key
+        const isForward = ['ArrowRight', 'PageDown'].includes(key) || (key === ' ' && !showIntro.value && showResult.value) || key === 'Enter'
+        const isBackward = ['ArrowLeft', 'PageUp'].includes(key)
+        
+        if (showIntro.value) {
+          if (['ArrowRight', 'PageDown'].includes(key)) {
+            e.preventDefault()
+            nextIntroSlide()
+          } else if (['ArrowLeft', 'PageUp'].includes(key)) {
+            e.preventDefault()
+            prevIntroSlide()
+          } else if (key === 'Enter' || key === ' ') {
+            e.preventDefault()
+            if (currentSlide.value === introSlides.value.length - 1) {
+              startQuiz()
+            } else {
+              nextIntroSlide()
+            }
+          }
+          return
+        }
+
+        // Quiz navigation (after intro)
+        if (!showIntro.value) {
+          // Answer selection via number keys 1-9
+          if (!showResult.value && /[1-9]/.test(key)) {
+            const idx = parseInt(key, 10) - 1
+            const q = questions.value[currentQuestion.value]
+            if (q.type === 'multiple' || q.type === 'photo') {
+              if (q.options[idx]) {
+                selectAnswer(q.options[idx])
+              }
+            }
+          }
+
+            // Advance after result
+          if (showResult.value && isForward) {
+            e.preventDefault()
+            if (currentQuestion.value < questions.value.length - 1) {
+              nextQuestion()
+            } else if (correctAnswers.value >= minCorrectAnswers.value) {
+              unlockWebsite()
+            }
+          }
+        }
+      }
+      window.addEventListener('keydown', keyHandler)
+
+      // Store for cleanup
+      _keyCleanup.value = () => window.removeEventListener('keydown', keyHandler)
     })
 
+    const _keyCleanup = ref(null)
+
+    onUnmounted(() => {
+      if (_keyCleanup.value) _keyCleanup.value()
+    })
+    
     return {
       isUnlocked,
       currentQuestion,
@@ -441,6 +621,9 @@ export default {
       answeredQuestions,
       devMode,
       jumpToQuestion,
+      showIntro,
+      currentSlide,
+      introSlides,
       selectAnswer,
       checkTextAnswer,
       nextQuestion,
@@ -448,7 +631,10 @@ export default {
       restartQuiz,
       secretSkipQuiz,
       toggleDevMode,
-      jumpToQuestionFunc
+      jumpToQuestionFunc,
+      nextIntroSlide,
+      prevIntroSlide,
+      startQuiz
     }
   }
 }
@@ -530,6 +716,186 @@ export default {
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
+
+.intro-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 1rem;
+  min-height: 100%;
+}
+
+.intro-slide {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 30px;
+  padding: 2.5rem 2rem 2rem;
+  max-width: 680px;
+  width: 100%;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(6px);
+  border: 3px solid rgba(255,255,255,0.7);
+  animation: fadeIn 0.6s ease;
+}
+
+.intro-slide::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  left: -20%;
+  width: 140%;
+  height: 140%;
+  background: radial-gradient(circle at 30% 30%, rgba(255,107,107,0.15), transparent),
+              radial-gradient(circle at 70% 70%, rgba(78,205,196,0.15), transparent);
+  z-index: 0;
+  animation: pulseBg 6s linear infinite;
+}
+
+@keyframes pulseBg {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.intro-title {
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(1.6rem, 4.5vw, 3.2rem);
+  text-align: center;
+  margin-bottom: 1.5rem;
+  line-height: 1.15;
+  background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  position: relative;
+  z-index: 1;
+}
+
+.intro-lines {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.intro-lines li {
+  background: linear-gradient(90deg, rgba(255,255,255,0.9), rgba(255,255,255,0.6));
+  padding: 0.9rem 1.2rem;
+  border-radius: 15px;
+  font-size: clamp(1rem, 2.2vw, 1.3rem);
+  font-weight: 500;
+  line-height: 1.4;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  backdrop-filter: blur(4px);
+  position: relative;
+}
+
+.intro-lines li::before {
+  content: '🎈';
+  position: absolute;
+  left: -12px;
+  top: 8px;
+  font-size: 1.2rem;
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float { 0%,100% { transform: translateY(0);} 50% { transform: translateY(-6px);} }
+
+.intro-footer {
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 1.8rem;
+  position: relative;
+  z-index: 1;
+}
+
+.intro-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 2;
+}
+
+.nav-btn, .start-btn {
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  padding: 0.9rem 1.4rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 15px;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.nav-btn:hover:not(:disabled), .start-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+}
+
+.nav-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.start-btn {
+  background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+  font-size: 1.1rem;
+  padding: 1rem 1.6rem;
+  animation: pulse 2.2s ease-in-out infinite;
+}
+
+.dots {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.15);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.dot.active {
+  background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+  transform: scale(1.2);
+  box-shadow: 0 0 0 6px rgba(255,255,255,0.6);
+}
+
+.dot:hover:not(.active) { background: rgba(0,0,0,0.3); }
+
+.intro-hint {
+  text-align: center;
+  font-size: 0.85rem;
+  opacity: 0.7;
+  margin-top: 1.2rem;
+  font-style: italic;
+  position: relative;
+  z-index: 1;
+}
+
+/* Existing styles below remain unchanged */
 
 .question-card {
   background: white;
