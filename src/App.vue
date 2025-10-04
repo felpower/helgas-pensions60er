@@ -89,19 +89,17 @@
         />
       </section>
 
-      <!-- Performances Section -->
-      <section id="performances" class="section performances-section" data-aos="fade-up">
-        <h2 class="section-title">🎤 Helgas größte Auftritte 🎵</h2>
-        <div class="story-text" data-aos="slide-up">
-          <p>Die Bühne war schon immer ihr zweites Zuhause! 🎭</p>
-          <p>Vom örtlichen Wirtshaus bis zum Musikanten und Silvesterstadl - Helgas Stimme hat unzählige Herzen erfreut! ✨🎶</p>
+      <!-- Pazi Section -->
+      <section id="pazi" class="section" data-aos="fade-up">
+        <h2 class="section-title">👩‍👦 Sohn Pazi und Mama Helga 👩‍👦</h2>
+        <div class="story-text" data-aos="slide-right">
+          <p>Mama Helga und ihr kleiner Pazi - ein unschlagbares Team!</p>
+          <p>Gemeinsam erleben sie die schönsten Abenteuer und schaffen unvergessliche Erinnerungen.</p>
         </div>
-        
-        <VideoPlayer 
-          v-if="familyVideos.length > 0"
-          :videos="familyVideos"
-          data-aos="zoom-in"
-          data-aos-delay="300"
+        <PhotoGrid 
+          :photos="paziPhotos" 
+          @photo-click="openPhotoModal"
+          data-aos="fade-up"
         />
       </section>
 
@@ -119,6 +117,24 @@
         />
       </section>
 
+      <!-- Performances Section -->
+      <section id="performances" class="section performances-section" data-aos="fade-up">
+        <h2 class="section-title">🎤 Helgas größte Auftritte 🎵</h2>
+        <div class="story-text" data-aos="slide-up">
+          <p>Die Bühne war schon immer ihr zweites Zuhause! 🎭</p>
+          <p>Vom örtlichen Wirtshaus bis zum Musikanten und Silvesterstadl - Helgas Stimme hat unzählige Herzen erfreut! ✨🎶</p>
+        </div>
+        
+        <VideoPlayer 
+          v-if="familyVideos.length > 0"
+          :videos="familyVideos"
+          data-aos="zoom-in"
+          data-aos-delay="300"
+        />
+      </section>
+
+
+
       <!-- Birthday Wishes Section -->
       <section id="birthday-wishes" class="section birthday-section" data-aos="zoom-in">
         <h2 class="section-title party-mode">🎊 ALLES GUTE ZUM 60. GEBURTSTAG! 🎊</h2>
@@ -129,6 +145,8 @@
             <p>💖 Du wirst nicht älter, du wirst besser! 💖</p>
             <p>🎂 Möge dein Tag voller Lachen, Liebe und Kuchen sein! 🎂</p>
             <p>💖 Mama ich hab dich unendlich lieb, danke dass es dich gibt! 🥰</p>
+            <p>🎉 Auf viele weitere Jahre voller Abenteuer 🎉</p>
+            <p>🎁 Hiermit möchten wir dir das Hauptgeschenk überreichen! 🎁</p>
           </div>
           
           <div class="birthday-stats" data-aos="fade-up" data-aos-delay="500">
@@ -227,8 +245,9 @@ export default {
       { id: 'early-years', name: 'Frühe Jahre', emoji: '👶' },
       { id: 'young-adult', name: 'Jung & Wild', emoji: '🌟' },
       { id: 'family-life', name: 'Familie', emoji: '👨‍👩‍👧‍👦' },
-      { id: 'performances', name: 'Auftritte', emoji: '🎤' },
+      { id: 'pazi', name: 'Pazi', emoji: '👩‍👦' },
       { id: 'recent-years', name: 'Goldene Jahre', emoji: '🎭' },
+      { id: 'performances', name: 'Auftritte', emoji: '🎤' },
       { id: 'birthday-wishes', name: 'Geburtstag!', emoji: '🎂' }
     ])
 
@@ -239,29 +258,46 @@ export default {
     ])
 
     const youngAdultPhotos = ref([
-      { id: 4, src: '/photos/vroni/Klein.jpg', caption: 'Von kleinauf schon ein Hingucker! 👶' },
-      { id: 5, src: '/photos/vroni/Blumen.jpg', caption: 'Auch oben auf den Tischen wurde gesungen! ✨' },
-      { id: 7, src: '/photos/vroni/CD.jpg', caption: 'Die erste CD! 🌍' },
-      { id: 10, src: '/photos/vroni/AlbumCoverDeisenbach.png', caption: 'Ein weiteres Album Cover dieses mal beim Deisenbach oben! 📸' },
-      { id: 6, src: '/photos/vroni/Dirndl.jpg', caption: 'Jede Gaststube wurde zur Bühne! 🌍' },
-
-      { id: 8, src: '/photos/vroni/Auszeichnung.jpg', caption: 'Auch diverse Auszeichnungen dürfen nicht fehlen! 🏆' },
-      { id: 9, src: '/photos/vroni/DirndlBaWArni.png', caption: 'Auch mit Prominenten dürfen ein paar Fotos nicht fehlen! 💃' },
-      { id: 11, src: '/photos/vroni/VormKamin.jpg', caption: 'Ein unvergesslicher Live-Auftritt mit den Reitzenden Reitzenberger Dirndln! 🎤' }
+      { id: 1, src: '/photos/vroni/Klein.jpg', caption: 'Von kleinauf schon ein Hingucker! 👶' },
+      { id: 2, src: '/photos/vroni/Blumen.jpg', caption: 'Auch oben auf den Tischen wurde gesungen! ✨' },
+      { id: 3, src: '/photos/vroni/CD.jpg', caption: 'Die erste CD! 🌍' },
+      { id: 4, src: '/photos/vroni/AlbumCoverDeisenbach.png', caption: 'Ein weiteres Album Cover dieses mal beim Deisenbach oben! 📸' },
+      { id: 5, src: '/photos/vroni/Dirndl.jpg', caption: 'Jede Gaststube wurde zur Bühne! 🌍' },
+      { id: 6, src: '/photos/vroni/Auszeichnung.jpg', caption: 'Auch diverse Auszeichnungen dürfen nicht fehlen! 🏆' },
+      { id: 7, src: '/photos/vroni/DirndlBaWArni.png', caption: 'Auch mit Prominenten dürfen ein paar Fotos nicht fehlen! 💃' },
+      { id: 8, src: '/photos/vroni/VormKamin.jpg', caption: 'Ein unvergesslicher Live-Auftritt mit den Reitzenden Reitzenberger Dirndln! 🎤' }
     ])
 
     const familyPhotos = ref([
-      { id: 7, src: '/photos/family/baden.jpg', caption: 'Der eigene Pool zuhause, einfach eine Oase der Ruhe! 👩‍👧‍👦' },
-      { id: 8, src: '/photos/family/BadenStrandArni.jpg', caption: 'Urlaub am Strand mit der Family, jedes Jahr wieder gerne! 🏖️' },
-      { id: 9, src: '/photos/family/SkiWMAlm.jpg', caption: 'Magische Momente bei der Musikanten Ski WM am Berg auf der Alm! ⛷️' },
-      { id: 10, src: '/photos/family/WienerAdvent.jpg', caption: 'Auch beim Punsch trinken is die Helga immer dabei! 🍷' }
+      { id: 1, src: '/photos/family/baden.jpg', caption: 'Der eigene Pool zuhause, einfach eine Oase der Ruhe! 👩‍👧‍👦' },
+      { id: 3, src: '/photos/family/SkiWMAlm.jpg', caption: 'Magische Momente bei der Musikanten Ski WM am Berg auf der Alm! ⛷️' },
+      { id: 4, src: '/photos/family/WienerAdvent.jpg', caption: 'Auch beim Punsch trinken is die Helga immer dabei! 🍷' },
+      { id: 5, src: '/photos/family/AnkunftPaziGrp.jpg', caption: 'Überraschende Mitternachtsankunft vom Pazi nach 1/2 Jahr in der USA! ✈️' },
+      { id: 2, src: '/photos/family/BadenStrandArni.jpg', caption: 'Urlaub am Strand mit der Family, jedes Jahr wieder gerne! 🏖️' },
+      { id: 6, src: '/photos/family/MusikantenSkiWMEssen.jpg', caption: 'Essen bei der Musikanten Ski WM, ein Fest für die Sinne! 🎶' },
+      { id: 7, src: '/photos/family/Pizza.jpg', caption: 'Gemeinsames Pizzaessen - ein Familienfest! 🍕' },
+      { id: 8, src: '/photos/family/KathiPeruecke.jpg', caption: 'Vorbereitung für den großen Auftritt! 👗' }
     ])
 
+    const paziPhotos = ref([
+      { id: 2, src: '/photos/pazi/SkifoahnStahu.jpg', caption: 'Abschluss beim Reitzi Ski Ausflug in der Alm Arena' },
+      { id: 3, src: '/photos/pazi/BergArni.jpg', caption: 'Auch am Berg wird fleißig Party gemacht! 🎶' },
+      {id : 4, src: '/photos/pazi/LaungaLulatsch.jpg', caption: 'Auch gemeinsam aufs Festival fahren die beiden! 🎉'},
+      { id: 1, src: '/photos/pazi/AnkunftPazi.jpg', caption: 'Helga und Pazi - nach einem halben Jahr endlich wieder vereint! 👩‍👦' },
+      { id: 5, src: '/photos/pazi/PaziBaby.jpg', caption: 'Mama Helga und ihr kleiner Pazi beim Baden! 🏊'       },
+      { id: 6, src: '/photos/pazi/PaziKuchenBaby.jpg', caption: 'Gemeinsam am Kuchen essen, immer wieder eine Sauerei gewesen! 🎂' }
+    ]) 
+
     const recentPhotos = ref([ 
-      { id: 10, src: '/photos/party/WoodstockDahoam.jpg', caption: 'Woodstock der Blasmusik dahoam! 💅'},
-      { id: 11, src: '/photos/party/ImBumsBus.jpg', caption: 'Am Ende noch den Bums Bus ausgeräumt! 🌟'},
-      { id: 12, src: '/photos/party/Zeltfest.jpg', caption: 'Jedes Zeltfest ist immer a Hit' },
-      { id: 13, src: '/photos/party/HelgaVollsuff.jpg', caption: 'Helga in Partylaune! 🥳' }
+      { id: 1, src: '/photos/party/WoodstockDahoam1Arni.jpg', caption: 'Woodstock der Blasmusik dahoam! 💅'},
+      { id: 2, src: '/photos/party/ImBumsBus.jpg', caption: 'Am Ende noch den Bums Bus ausgeräumt! 🌟'},
+      { id: 3, src: '/photos/party/Zeltfest.jpg', caption: 'Jedes Zeltfest ist immer a Hit' },
+      { id: 5, src: '/photos/party/Seidlbar.jpg', caption: 'Die Seidlbar - ein Ort für gute Laune! 🍹' },
+      { id: 6, src: '/photos/party/HelgaUntermTisch.jpg', caption: 'Wen sie da wohl gesucht hat? 🤔' },
+      { id: 7, src: '/photos/party/SignaArni.jpg', caption: 'Auch die Behörden wurden eingeschalten beim Signa Skandal! 🚨' },
+      { id: 8, src: '/photos/party/ThumbsUp.jpg', caption: 'Die besten Momente mit den besten Schwestern! 👯‍♀️' },
+      { id: 4, src: '/photos/party/HelgaVollsuff.jpg', caption: 'Helga in Partylaune! 🥳' },
+
     ])
 
      const familyVideos = ref([
@@ -497,6 +533,7 @@ export default {
       earlyYearsPhotos,
       youngAdultPhotos,
       familyPhotos,
+      paziPhotos,
       recentPhotos,
       familyVideos,
       

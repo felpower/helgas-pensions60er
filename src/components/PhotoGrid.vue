@@ -153,10 +153,10 @@ export default {
   position: relative;
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0);
   transition: all 0.4s ease;
   cursor: pointer;
-  background: white;
+  background: transparent;
   transform-style: preserve-3d;
   display: flex;
   flex-direction: column;
@@ -174,13 +174,12 @@ export default {
 .photo-wrapper {
   position: relative;
   width: 100%;
-  min-height: 200px;
-  max-height: 400px;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   background: #f8f9fa;
+  border-radius: 15px;
 }
 
 .photo-wrapper img {
@@ -188,9 +187,11 @@ export default {
   max-height: 100%;
   width: auto;
   height: auto;
-  object-fit: contain;
+  object-fit: cover;
+  object-position: center;
   transition: all 0.4s ease;
   filter: brightness(1) saturate(1);
+  border-radius: 15px;
 }
 
 .photo-item:hover .photo-wrapper img {

@@ -1,5 +1,5 @@
 <template>
-  <div class="music-controls" :class="{ 'party-mode': isPlaying }">
+  <div class="music-controls" :class="{ 'collapsed': collapsed }">
     <button 
       class="music-btn play-pause-btn" 
       @click="$emit('toggle-music')"
@@ -37,14 +37,12 @@
         </div>
       </div>
     </div>
-    
     <button 
-      class="music-btn party-btn" 
-      @click="togglePartyMode"
-      :class="{ active: partyMode }"
-      title="Party-Modus!"
+      class="music-btn fold-btn" 
+      @click="toggleFold"
+      :title="collapsed ? 'Musiksteuerung ausklappen' : 'Musiksteuerung einklappen'"
     >
-      🎉
+      {{ collapsed ? '»' : '«' }}
     </button>
   </div>
 </template>
@@ -70,46 +68,13 @@ export default {
   },
   emits: ['toggle-music', 'volume-change', 'next-song'],
   setup(props, { emit }) {
-    const partyMode = ref(false)
-    
-    const togglePartyMode = () => {
-      partyMode.value = !partyMode.value
-      
-      if (partyMode.value) {
-        document.body.classList.add('party-mode')
-        // Add some extra confetti
-        createPartyConfetti()
-      } else {
-        document.body.classList.remove('party-mode')
-      }
+    const collapsed = ref(false)
+    const toggleFold = () => {
+      collapsed.value = !collapsed.value
     }
-    
-    const createPartyConfetti = () => {
-      const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff']
-      
-      for (let i = 0; i < 50; i++) {
-        setTimeout(() => {
-          const confetti = document.createElement('div')
-          confetti.className = 'confetti'
-          confetti.style.left = Math.random() * 100 + '%'
-          confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)]
-          confetti.style.width = Math.random() * 15 + 8 + 'px'
-          confetti.style.height = confetti.style.width
-          confetti.style.animationDelay = '0s'
-          confetti.style.animationDuration = (Math.random() * 2 + 2) + 's'
-          
-          document.body.appendChild(confetti)
-          
-          setTimeout(() => {
-            confetti.remove()
-          }, 4000)
-        }, i * 50)
-      }
-    }
-    
     return {
-      partyMode,
-      togglePartyMode
+      collapsed,
+      toggleFold
     }
   }
 }
@@ -117,11 +82,13 @@ export default {
 
 <style scoped>
 .music-controls {
+  background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
+  animation: gradientShift 1s ease infinite;
+  transform: scale(1.05);
   position: fixed;
   bottom: 20px;
   left: 20px;
   z-index: 1000;
-  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border-radius: 25px;
   padding: 15px 20px;
@@ -133,12 +100,21 @@ export default {
   border: 2px solid transparent;
 }
 
-.music-controls.party-mode {
-  background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
-  background-size: 400% 400%;
-  animation: gradientShift 1s ease infinite;
-  border-color: #fff;
-  transform: scale(1.05);
+.music-controls.collapsed {
+  width: 60px;
+  min-width: 60px;
+  max-width: 60px;
+  padding: 10px 8px;
+  gap: 0;
+  overflow: hidden;
+  left: 0;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+.music-controls.collapsed > .music-btn:not(.fold-btn),
+.music-controls.collapsed > .volume-control,
+.music-controls.collapsed > .now-playing {
+  display: none !important;
 }
 
 .music-btn {
@@ -154,6 +130,21 @@ export default {
   justify-content: center;
   min-width: 40px;
   min-height: 40px;
+}
+
+.fold-btn {
+  font-size: 1.2rem;
+  background: #f8f9fa;
+  border: 1px solid #eee;
+  color: #666;
+  margin-left: 0;
+  margin-right: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.fold-btn:hover {
+  background: #e0e0e0;
+  color: #333;
 }
 
 .music-btn:hover {
@@ -173,16 +164,6 @@ export default {
   background: rgba(33, 150, 243, 0.2);
 }
 
-.party-btn {
-  position: relative;
-  overflow: hidden;
-}
-
-.party-btn.active {
-  background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-  color: white;
-  animation: wiggle 0.5s ease-in-out infinite;
-}
 
 .volume-control {
   display: flex;
@@ -275,11 +256,6 @@ export default {
   50% { height: 16px; }
 }
 
-@keyframes wiggle {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-3deg); }
-  75% { transform: rotate(3deg); }
-}
 
 /* Mobile responsive */
 @media (max-width: 768px) {
@@ -290,6 +266,12 @@ export default {
     gap: 10px;
     flex-wrap: wrap;
     max-width: calc(100vw - 20px);
+  }
+  .music-controls.collapsed {
+    left: 0;
+    padding: 8px 4px;
+    min-width: 50px;
+    max-width: 50px;
   }
   
   .music-btn {
@@ -319,6 +301,13 @@ export default {
     left: auto;
     margin: 10px;
     justify-content: center;
+  }
+  .music-controls.collapsed {
+    left: 0;
+    margin: 0;
+    min-width: 40px;
+    max-width: 40px;
+    padding: 4px 2px;
   }
   
   .now-playing {

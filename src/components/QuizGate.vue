@@ -92,8 +92,8 @@
               :key="index"
               class="answer-btn"
               :class="{ 
-                'correct': showResult && option === questions[currentQuestion].correct,
-                'wrong': showResult && selectedAnswer === option && option !== questions[currentQuestion].correct,
+                'correct': showResult && (Array.isArray(questions[currentQuestion].correct) ? questions[currentQuestion].correct.includes(option) : option === questions[currentQuestion].correct),
+                'wrong': showResult && selectedAnswer === option && !(Array.isArray(questions[currentQuestion].correct) ? questions[currentQuestion].correct.includes(option) : option === questions[currentQuestion].correct),
                 'selected': selectedAnswer === option
               }"
               @click="selectAnswer(option)"
@@ -128,7 +128,9 @@
               <img 
                 :src="questions[currentQuestion].photoSrc" 
                 :alt="questions[currentQuestion].question"
-                class="question-photo"
+                class="question-photo clickable"
+                @click="openImageZoom(questions[currentQuestion].photoSrc)"
+                title="Klicke um das Bild zu vergrößern"
               />
             </div>
             
@@ -138,8 +140,8 @@
                 :key="index"
                 class="photo-option-btn"
                 :class="{ 
-                  'correct': showResult && option === questions[currentQuestion].correct,
-                  'wrong': showResult && selectedAnswer === option && option !== questions[currentQuestion].correct,
+                  'correct': showResult && (Array.isArray(questions[currentQuestion].correct) ? questions[currentQuestion].correct.includes(option) : option === questions[currentQuestion].correct),
+                  'wrong': showResult && selectedAnswer === option && !(Array.isArray(questions[currentQuestion].correct) ? questions[currentQuestion].correct.includes(option) : option === questions[currentQuestion].correct),
                   'selected': selectedAnswer === option
                 }"
                 @click="selectAnswer(option)"
@@ -232,6 +234,10 @@ export default {
     const isCorrect = ref(false)
     const correctAnswers = ref(0)
     
+    // Image zoom state
+    const showImageZoom = ref(false)
+    const zoomedImageSrc = ref('')
+    
     // Developer Mode
     const devMode = ref(false)
     const jumpToQuestion = ref(1)
@@ -305,6 +311,16 @@ export default {
       setTimeout(() => AOS.refresh(), 50)
     }
 
+    const openImageZoom = (imageSrc) => {
+      zoomedImageSrc.value = imageSrc
+      showImageZoom.value = true
+    }
+
+    const closeImageZoom = () => {
+      showImageZoom.value = false
+      zoomedImageSrc.value = ''
+    }
+
     const questions = ref([
       {
         question: "Wer ist heute zum Feiern da?",
@@ -359,15 +375,15 @@ export default {
         question: "Was macht Helga so besonders bei BMW? 🌟",
         type: "multiple",
         options: ["Sie war die jüngste Mitarbeiterin", "Sie war die längstdienende Angestellte", "Sie war die Chefin", "Sie hat dort geheiratet"],
-        correct: "Sie war die längstdienende Angestellte",
-        explanation: "Über 40 Jahre Treue - das ist wirklich beeindruckend! 👏"
+        correct: ["Sie war die längstdienende Angestellte", "Sie war die Chefin"],
+        explanation: "Über 40 Jahre Treue, manche meinen auch Sie war die Chefin - das ist wirklich beeindruckend! 👏"
       },
       {
         question: "Welche Position hat Helga beim Musikverein Kleinraming? 🎺",
         type: "multiple",
-        options: ["Kassiererin", "Schriftführerin", "Trommelpolierin", "Kuchenbeauftragte", "Schnapsdrossel"],
-        correct: "Schriftführerin",
-        explanation: "Helga ist beim Musikverein Kleinraming die Schriftführerin – Protokolle mit Schmäh garantiert! 📝😄"
+        options: ["Kassiererin", "Schriftführerin", "Chefin", "Trommelpolierin", "Kuchenbeauftragte", "Schnapsdrossel"],
+        correct: ["Schriftführerin", "Chefin", "Schnapsdrossel"],
+        explanation: "Helga ist beim Musikverein Kleinraming die Schriftführerin aber im Insgeheimen auch die Chefin und Schnapsdrossel sowieso – Protokolle mit Schmäh garantiert! 📝😄"
       },
       {
         question: "Auf diesem Bild sind 2 kleine Reitzis zu sehen. Wer davon ist unsere Geburtstagskönigin? 📸",
@@ -420,7 +436,12 @@ export default {
       const currentQ = questions.value[currentQuestion.value]
       
       if (currentQ.type === 'multiple' || currentQ.type === 'photo') {
-        isCorrect.value = answer === currentQ.correct
+        // Support für mehrere richtige Antworten
+        if (Array.isArray(currentQ.correct)) {
+          isCorrect.value = currentQ.correct.includes(answer)
+        } else {
+          isCorrect.value = answer === currentQ.correct
+        }
       } else if (currentQ.type === 'text') {
         isCorrect.value = forceResult !== null ? forceResult : false
       }
@@ -572,7 +593,11 @@ export default {
         if (showIntro.value) {
           if (['ArrowRight', 'PageDown'].includes(key)) {
             e.preventDefault()
-            nextIntroSlide()
+            if (currentSlide.value === introSlides.value.length - 1) {
+              startQuiz()
+            } else {
+              nextIntroSlide()
+            }
           } else if (['ArrowLeft', 'PageUp'].includes(key)) {
             e.preventDefault()
             prevIntroSlide()
@@ -589,6 +614,12 @@ export default {
 
         // Quiz navigation (after intro)
         if (!showIntro.value) {
+          // Close image zoom with ESC
+          if (key === 'Escape' && showImageZoom.value) {
+            e.preventDefault()
+            closeImageZoom()
+            return
+          }
           // Answer selection via number keys 1-9
           if (!showResult.value && /[1-9]/.test(key)) {
             const idx = parseInt(key, 10) - 1
@@ -639,6 +670,8 @@ export default {
       showIntro,
       currentSlide,
       introSlides,
+      showImageZoom,
+      zoomedImageSrc,
       selectAnswer,
       checkTextAnswer,
       nextQuestion,
@@ -649,7 +682,9 @@ export default {
       jumpToQuestionFunc,
       nextIntroSlide,
       prevIntroSlide,
-      startQuiz
+      startQuiz,
+      openImageZoom,
+      closeImageZoom
     }
   }
 }
@@ -1346,6 +1381,92 @@ export default {
   display: block;
 }
 
+.question-photo.clickable {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.question-photo.clickable:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Image Zoom Overlay */
+.image-zoom-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 20000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  backdrop-filter: blur(5px);
+  animation: fadeIn 0.3s ease;
+}
+
+.zoom-container {
+  position: relative;
+  max-width: 95vw;
+  max-height: 95vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zoomed-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 15px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: zoomIn 0.3s ease;
+}
+
+.close-zoom-btn {
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  color: #333;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.close-zoom-btn:hover {
+  background: #fff;
+  transform: scale(1.1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes zoomIn {
+  from { 
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to { 
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 .photo-options {
   display: flex;
   flex-direction: column;
@@ -1504,6 +1625,18 @@ export default {
   
   .option-number {
     font-size: 16px;
+  }
+
+  .image-zoom-overlay {
+    padding: 1rem;
+  }
+
+  .close-zoom-btn {
+    top: 10px;
+    right: 10px;
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
   }
 }
 </style>
