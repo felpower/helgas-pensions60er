@@ -49,6 +49,13 @@
 
       <!-- Original Quiz Content -->
       <div v-else>
+        <!-- Image Zoom Overlay -->
+        <div v-if="showImageZoom" class="image-zoom-overlay" @click.self="closeImageZoom">
+          <div class="zoom-container">
+            <img :src="zoomedImageSrc" class="zoomed-image" alt="Zoomed" @click="closeImageZoom" />
+            <button class="close-zoom-btn" @click="closeImageZoom" title="Schließen">×</button>
+          </div>
+        </div>
         <!-- Header -->
         <div class="quiz-header" data-aos="fade-down">
           <h1 class="quiz-title">🎂 Willkommen zur Geburtstagsfeier! 🎉</h1>
@@ -56,7 +63,7 @@
             Bevor wir mit der Geschenksübergabe beginnen können, müsst ihr beweisen, dass ihr unsere Helga wirklich kennt! Minimum 50% der Fragen müssen richtig beantwortet werden, sonst bekommt unsere Helga kein Geschenk. 😄
           </p>
           <div class="quiz-progress" @click="secretSkipQuiz" :title="'Klicke mich für einen geheimen Shortcut... 🤫'">
-            Frage {{ currentQuestion + 1 }} von {{ questions.length }}
+            Frage {{ questions.slice(0, currentQuestion + 1).filter(q => q.type !== 'section').length }} von {{ questions.filter(q => q.type !== 'section').length }}
           </div>
           
           <!-- Developer Mode Toggle (versteckt) -->
@@ -82,11 +89,21 @@
 
         <!-- Question Card -->
         <div class="question-card" data-aos="zoom-in" :key="currentQuestion">
-          <div class="question-number">{{ currentQuestion + 1 }}</div>
-          <h2 class="question-text">{{ questions[currentQuestion].question }}</h2>
-          
+          <div class="question-number">
+            {{ questions.slice(0, currentQuestion + 1).filter(q => q.type !== 'section').length }}
+          </div>
+          <h2 class="question-text">
+            {{ questions[currentQuestion].type === 'section' ? questions[currentQuestion].title : questions[currentQuestion].question }}
+          </h2>
+          <p v-if="questions[currentQuestion].type === 'section'" class="section-text">{{ questions[currentQuestion].text }}</p>
+          <!-- Section Type: Only Weiter Button -->
+          <div v-if="questions[currentQuestion].type === 'section'" class="answer-options">
+            <button class="answer-btn" @click="selectAnswer('weiter')">
+              <span class="answer-number">1.</span> Weiter
+            </button>
+          </div>
           <!-- Multiple Choice Questions -->
-          <div v-if="questions[currentQuestion].type === 'multiple'" class="answer-options">
+          <div v-else-if="questions[currentQuestion].type === 'multiple'" class="answer-options">
             <button 
               v-for="(option, index) in questions[currentQuestion].options" 
               :key="index"
@@ -100,25 +117,6 @@
               :disabled="showResult"
             >
               <span class="answer-number">{{ index + 1 }}.</span> {{ option }}
-            </button>
-          </div>
-
-          <!-- Text Input Questions -->
-          <div v-else-if="questions[currentQuestion].type === 'text'" class="answer-input">
-            <input 
-              v-model="textAnswer"
-              type="text" 
-              class="text-input"
-              :placeholder="questions[currentQuestion].placeholder"
-              @keyup.enter="checkTextAnswer"
-              :disabled="showResult"
-            />
-            <button 
-              class="submit-btn" 
-              @click="checkTextAnswer"
-              :disabled="showResult || !textAnswer.trim()"
-            >
-              Antworten
             </button>
           </div>
 
@@ -149,6 +147,52 @@
               >
                 <span class="option-number">{{ index + 1 }}.</span>
                 <span class="option-text">{{ option }}</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Audio/Musikfrage -->
+          <div v-else-if="questions[currentQuestion].type === 'audio'" class="audio-question">
+            <div class="audio-player">
+              <audio :src="questions[currentQuestion].audioSrc" controls preload="auto"></audio>
+            </div>
+            <div class="answer-options">
+              <button 
+                v-for="(option, index) in questions[currentQuestion].options" 
+                :key="index"
+                class="answer-btn"
+                :class="{ 
+                  'correct': showResult && option === questions[currentQuestion].correct,
+                  'wrong': showResult && selectedAnswer === option && option !== questions[currentQuestion].correct,
+                  'selected': selectedAnswer === option
+                }"
+                @click="selectAnswer(option)"
+                :disabled="showResult"
+              >
+                <span class="answer-number">{{ index + 1 }}.</span> {{ option }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Audio/Musikfrage -->
+          <div v-else-if="questions[currentQuestion].type === 'audio'" class="audio-question">
+            <div class="audio-player">
+              <audio :src="questions[currentQuestion].audioSrc" controls preload="auto"></audio>
+            </div>
+            <div class="answer-options">
+              <button 
+                v-for="(option, index) in questions[currentQuestion].options" 
+                :key="index"
+                class="answer-btn"
+                :class="{ 
+                  'correct': showResult && option === questions[currentQuestion].correct,
+                  'wrong': showResult && selectedAnswer === option && option !== questions[currentQuestion].correct,
+                  'selected': selectedAnswer === option
+                }"
+                @click="selectAnswer(option)"
+                :disabled="showResult"
+              >
+                <span class="answer-number">{{ index + 1 }}.</span> {{ option }}
               </button>
             </div>
           </div>
@@ -323,13 +367,6 @@ export default {
 
     const questions = ref([
       {
-        question: "Wer ist heute zum Feiern da?",
-        type: "multiple",
-        options: ["Helga", "Nur Freunde", "Nur Family","Niemand", "Wir alle!"],
-        correct: "Wir alle!",
-        explanation: "Wir sind alle heute zum feiern da, Helga, ihre Familie und Freunde! 🎉"
-      },
-      {
         question: "Wann hat unsere Geburtstagskönigin und seit dieser Woche Pensionistin das Licht der Welt erblickt? 👶",
         type: "multiple",
         options: ["2.10.1965","30.9.1965",  "1.10.1964", "30.9.1964", "30.9.1966", "30.10.1965"],
@@ -344,11 +381,17 @@ export default {
         explanation: "Helgas erster Freund war da Burberger Sepp, danach kam erst der Telefonzellen Ferdl - ein echter Klassiker! ✨"
       },
       {
-        question: "Nun zu einer Schätzfrage. Welche Schuhgröße hat Helgas Sohn Patrick? 👟",
+        question: "Wo ist Helga zur Berufsschule gegangen? 📚",
         type: "multiple",
-        options: ["46", "48", "50", "52", "Ruderbootgröße", "Clownschuh XXL"],
-        correct: "50",
-        explanation: "Patrick trägt tatsächlich Schuhgröße 50 – keine kleinen Füße! 🦶"
+        options: ["Berufsschule Steyr-Garsten", "Berufsschule Münichholz", "Berufsschule Ennsdorf", "Berufsschule Weyer", "Berufsschule Linz-Urfahr"],
+        correct: "Berufsschule Münichholz",
+        explanation: "Helga drückte die Schulbank in der Berufsschule Münichholz – unvergessliche Zeiten! 🏫"
+      },
+      { 
+        title: "Gratuliere zu den ersten 3 Fragen, damit bekommst du dein erstes Geschenk! 🎁",
+        type: "section",
+        options: ["Weiter"],
+        explanation: "Nur noch 12 Fragen :D",
       },
       {
         question: "Was für ein Instrument hat Helga in ihrer Jugend gelernt? 🎼",
@@ -365,11 +408,17 @@ export default {
         explanation: "Helgas Kinderband trug den Namen Reitzenberger Dirndl – fast schon Kult! 🎤"
       },
       {
-        question: "Wo ist Helga zur Berufsschule gegangen? 📚",
+        question: "Nun zu einer Schätzfrage. Welche Schuhgröße hat Helgas Sohn Patrick? 👟",
         type: "multiple",
-        options: ["Berufsschule Steyr-Garsten", "Berufsschule Münichholz", "Berufsschule Ennsdorf", "Berufsschule Weyer", "Berufsschule Linz-Urfahr"],
-        correct: "Berufsschule Münichholz",
-        explanation: "Helga drückte die Schulbank in der Berufsschule Münichholz – unvergessliche Zeiten! 🏫"
+        options: ["46", "48", "50", "52", "Ruderbootgröße", "Clownschuh XXL"],
+        correct: "50",
+        explanation: "Patrick trägt tatsächlich Schuhgröße 50 – keine kleinen Füße! 🦶"
+      },
+      { 
+        title: "Gratuliere zu den nächsten 3 Fragen, damit bekommst du dein nächstes Geschenk! 🎁", 
+        type: "section",
+        options: ["Weiter"],
+        explanation: "Fast die Hälfte geschafft!",
       },
       {
         question: "Was macht Helga so besonders bei BMW? 🌟",
@@ -384,6 +433,12 @@ export default {
         options: ["Kassiererin", "Schriftführerin", "Chefin", "Trommelpolierin", "Kuchenbeauftragte", "Schnapsdrossel"],
         correct: ["Schriftführerin", "Chefin", "Schnapsdrossel"],
         explanation: "Helga ist beim Musikverein Kleinraming die Schriftführerin aber im Insgeheimen auch die Chefin und Schnapsdrossel sowieso – Protokolle mit Schmäh garantiert! 📝😄"
+      },
+      { 
+        title: "Ihr seit ja richtige Helga Spezialisten! Hier gibt's das nächste Geschenk! 🎁", 
+        type: "section",
+        options: ["Weiter"],
+        explanation: "Mehr als die Hälfte geschafft, gratulierem jetzt kommen ein paar Bilder und Audio Fragen!",
       },
       {
         question: "Auf diesem Bild sind 2 kleine Reitzis zu sehen. Wer davon ist unsere Geburtstagskönigin? 📸",
@@ -402,12 +457,40 @@ export default {
         explanation: "Helga ist die Person links im Bild – schon damals ein Hingucker! ✨"
       },
       {
+        question: "Welches Lied wird hier gespielt? 🎵",
+        type: "audio",
+        audioSrc: "/audio/der_frohe_wanderer.mp3",
+        options: ["Der Frohe Wanderer", "Alles Gute zum Geburtstag", "Heimaterinnerung", "Hoch von den Bergen"],
+        correct: "Der Frohe Wanderer",
+        explanation: "Das Lied ist 'Der Frohe Wanderer' – ein echter Klassiker! 🎶"
+      },
+      { 
+        title: "Ihr seit ein Wahnsinn, Helga-Fans, hier gibt's das nächste Geschenk! 🎁", 
+        type: "section",
+        options: ["Weiter"],
+        explanation: "Die letzten 3 Fragen werden zum Abschluss nochmal gemütlich!",
+      },
+      {
+        question: "Was ist Helgas Lieblingsbeschäftigung am Sonntag? ☀️",
+        type: "multiple",
+        options: ["In die Kirche gehen", "Kuchen backen", "Keine Anrufe keine Besuche!", "Wandern mit der Musikkapelle", "Gemütlich einen trinken am Zeltfest"],
+        correct: ["Keine Anrufe keine Besuche!", "Gemütlich einen trinken am Zeltfest"],
+        explanation: "Am Sonntag will Helga ihre Ruhe – keine Anrufe, keine Besuche! 📵🚪 Aber in Wahrheit geht Sie liebend gerne am Sonntag aufs Zeltfest"
+      },
+      {
         question: "Welches besondere Alter feiert Helga heute? 🎊",
         type: "multiple",
         options: ["59 Jahre", "60 Jahre", "61 Jahre", "58 Jahre"],
         correct: "60 Jahre",
         explanation: "60 wunderbare Jahre voller Leben, Lachen und Musik! 🎉"
-      }
+      },
+      {
+        question: "Wer ist heute zum Feiern da?",
+        type: "multiple",
+        options: ["Helga", "Nur Freunde", "Nur Family","Niemand", "Wir alle!"],
+        correct: "Wir alle!",
+        explanation: "Wir sind alle heute zum feiern da, Helga, ihre Familie und Freunde! 🎉"
+      },
     ])
 
     const answeredQuestions = computed(() => {
@@ -417,6 +500,12 @@ export default {
     const selectAnswer = (answer) => {
       if (showResult.value) return
       selectedAnswer.value = answer
+      // For section type, skip result feedback and go to next question immediately
+      const currentQ = questions.value[currentQuestion.value]
+      if (currentQ.type === 'section') {
+        nextQuestion()
+        return
+      }
       checkAnswer(answer)
     }
 
@@ -434,9 +523,7 @@ export default {
 
     const checkAnswer = (answer, forceResult = null) => {
       const currentQ = questions.value[currentQuestion.value]
-      
-      if (currentQ.type === 'multiple' || currentQ.type === 'photo') {
-        // Support für mehrere richtige Antworten
+      if (['multiple', 'photo', 'audio', 'section'].includes(currentQ.type)) {
         if (Array.isArray(currentQ.correct)) {
           isCorrect.value = currentQ.correct.includes(answer)
         } else {
@@ -624,7 +711,7 @@ export default {
           if (!showResult.value && /[1-9]/.test(key)) {
             const idx = parseInt(key, 10) - 1
             const q = questions.value[currentQuestion.value]
-            if (q.type === 'multiple' || q.type === 'photo') {
+            if (q.type === 'multiple' || q.type === 'photo' || q.type === 'section' || q.type === 'audio') {
               if (q.options[idx]) {
                 selectAnswer(q.options[idx])
               }
@@ -1412,18 +1499,23 @@ export default {
   position: relative;
   max-width: 95vw;
   max-height: 95vh;
+  width: 100vw;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .zoomed-image {
-  max-width: 100%;
-  max-height: 100%;
+  max-width: 95vw;
+  max-height: 95vh;
+  width: auto;
+  height: auto;
   object-fit: contain;
   border-radius: 15px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
   animation: zoomIn 0.3s ease;
+  margin: auto;
 }
 
 .close-zoom-btn {

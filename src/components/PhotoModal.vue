@@ -103,13 +103,16 @@ export default {
     const createLoveExplosion = () => {
       const hearts = ['💖', '💕', '💗', '💓', '💝']
       
-      for (let i = 0; i < 20; i++) {
+      for (let i = 0; i < 40; i++) {
         setTimeout(() => {
           const heart = document.createElement('div')
           heart.textContent = hearts[Math.floor(Math.random() * hearts.length)]
-          heart.style.position = 'fixed'
-          heart.style.left = '50%'
-          heart.style.top = '50%'
+            heart.style.position = 'fixed'
+            // Randomize position around the center (±120px)
+            const offsetX = (Math.random() - 0.5) * 240
+            const offsetY = (Math.random() - 0.5) * 240
+            heart.style.left = `calc(50% + ${offsetX}px * 4)`
+            heart.style.top = `calc(50% + ${offsetY}px * 3)`
           heart.style.fontSize = '2rem'
           heart.style.pointerEvents = 'none'
           heart.style.zIndex = '10000'
@@ -370,41 +373,6 @@ export default {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
-
-.love-btn {
-  background: linear-gradient(45deg, #ff6b6b, #ff8a80);
-}
-
-.share-btn {
-  background: linear-gradient(45deg, #4ecdc4, #44a08d);
-}
-
-.download-btn {
-  background: linear-gradient(45deg, #45b7d1, #96c93d);
-}
-/* 
-.photo-stats {
-  display: flex;
-  justify-content: space-around;
-  background: #f8f9fa;
-  border-radius: 15px;
-  padding: 1rem;
-}
-
-.stat-item {
-  text-align: center;
-}
-
-.stat-icon {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.stat-text {
-  font-size: 0.9rem;
-  color: #666;
-  font-weight: bold;
-} */
 
 .nav-arrow {
   position: absolute;

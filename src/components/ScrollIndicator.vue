@@ -1,24 +1,21 @@
 <template>
-  <div class="scroll-indicator">
-    <div 
-      v-for="(section, index) in sections" 
-      :key="section.id"
-      class="scroll-dot"
-      :class="{ active: index === currentSection }"
-      :title="section.name"
-      @click="$emit('scroll-to', index)"
-    >
-      <div class="dot-emoji">{{ section.emoji }}</div>
-      <div class="dot-label">{{ section.name }}</div>
-    </div>
-    
-    <!-- Progress bar -->
-    <div class="scroll-progress">
+  <div class="scroll-indicator" :class="{ collapsed }">
+    <template v-if="!collapsed">
       <div 
-        class="progress-fill" 
-        :style="{ height: progressPercentage + '%' }"
-      ></div>
-    </div>
+        v-for="(section, index) in sections" 
+        :key="section.id"
+        class="scroll-dot"
+        :class="{ active: index === currentSection }"
+        :title="section.name"
+        @click="$emit('scroll-to', index)"
+      >
+        <div class="dot-emoji">{{ section.emoji }}</div>
+        <div class="dot-label">{{ section.name }}</div>
+      </div>
+    </template>
+    <button class="collapse-btn" @click="toggleCollapse" :title="collapsed ? 'Scrollanzeige öffnen' : 'Scrollanzeige minimieren'">
+      {{ collapsed ? '^' : '×' }}
+    </button>
   </div>
 </template>
 
@@ -40,6 +37,10 @@ export default {
   emits: ['scroll-to'],
   setup(props) {
     const scrollY = ref(0)
+    const collapsed = ref(false)
+    const toggleCollapse = () => {
+      collapsed.value = !collapsed.value
+    }
     
     const progressPercentage = computed(() => {
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight
@@ -59,7 +60,9 @@ export default {
     })
     
     return {
-      progressPercentage
+      progressPercentage,
+      collapsed,
+      toggleCollapse
     }
   }
 }
@@ -83,6 +86,47 @@ export default {
   gap: 15px;
   transition: all 0.3s ease;
   border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.scroll-indicator.collapsed {
+  width: 48px;
+  min-width: 48px;
+  max-width: 48px;
+  height: 48px;
+  min-height: 48px;
+  max-height: 48px;
+  padding: 0;
+  gap: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.95);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  align-items: center;
+  justify-content: center;
+  top: auto;
+  bottom: 20px;
+  right: 20px;
+  transform: none;
+}
+.collapse-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #f8f9fa;
+  border: 1px solid #eee;
+  color: #666;
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  margin-bottom: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.collapse-btn:hover {
+  background: #e0e0e0;
+  color: #333;
 }
 
 .scroll-indicator:hover {
@@ -180,6 +224,16 @@ export default {
     padding: 15px 8px;
     gap: 10px;
   }
+  .scroll-indicator.collapsed {
+    right: 10px;
+    bottom: 10px;
+    width: 40px;
+    min-width: 40px;
+    max-width: 40px;
+    height: 40px;
+    min-height: 40px;
+    max-height: 40px;
+  }
   
   .scroll-dot {
     width: 35px;
@@ -204,6 +258,16 @@ export default {
     right: 5px;
     padding: 12px 6px;
     gap: 8px;
+  }
+  .scroll-indicator.collapsed {
+    right: 5px;
+    bottom: 5px;
+    width: 32px;
+    min-width: 32px;
+    max-width: 32px;
+    height: 32px;
+    min-height: 32px;
+    max-height: 32px;
   }
   
   .scroll-dot {

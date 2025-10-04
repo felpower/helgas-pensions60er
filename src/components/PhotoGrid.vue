@@ -174,11 +174,12 @@ export default {
 .photo-wrapper {
   position: relative;
   width: 100%;
+  height: 280px;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f8f9fa;
+  background: transparent;
   border-radius: 15px;
 }
 
@@ -187,11 +188,13 @@ export default {
   max-height: 100%;
   width: auto;
   height: auto;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
   transition: all 0.4s ease;
   filter: brightness(1) saturate(1);
   border-radius: 15px;
+  display: block;
+  margin: auto;
 }
 
 .photo-item:hover .photo-wrapper img {
@@ -265,7 +268,7 @@ export default {
 
 .photo-caption {
   padding: 1.5rem;
-  background: white;
+  background: #fff;
   text-align: center;
 }
 
