@@ -181,7 +181,6 @@
       <!-- Background Audio -->
       <audio 
         ref="backgroundMusic" 
-        loop 
         preload="auto"
         @ended="nextSong"
       >
@@ -234,9 +233,11 @@ export default {
     // Sample data - you'll replace these with your actual content
     const songs = ref([
       { name: "Alles gute zum Geburtstag", src: "/audio/alles_gute_zum_geburtstag.mp3" },
+      { name: "Helga mit Spritzwein und Käse", src: "/audio/HelgaMitSpirtzweinUndKaese.mp3" },
       { name: "Der Frohe Wanderer", src: "/audio/der_frohe_wanderer.mp3" },
       { name: "Heimaterinnerung", src: "/audio/heimaterinnerung.mp3" },
       { name: "Hoch von den Bergen", src: "/audio/hoch_von_den_bergen.mp3" },
+      { name: "Mama Helga - unser Superstar", src: "/audio/Mama_Helga_unser_Superstar.mp3" },
       { name: "Tritsch Tratsch", src: "/audio/Tritsch_Tratsch.mp3" },
     ])
 
