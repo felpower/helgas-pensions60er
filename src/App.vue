@@ -107,7 +107,7 @@
       <section id="recent-years" class="section" data-aos="fade-up">
         <h2 class="section-title">🎉 Die goldenen Party Jahre 🥳</h2>
         <div class="story-text" data-aos="slide-right">
-          <p>Neue Abenteuer, neue Hobbys und der Beweis, dass 60 das neue 30 ist!</p>
+          <p>Neue Abenteuer, viel Party und der Beweis, dass 60 das neue 30 ist!</p>
           <p>Immer noch fabelhaft, immer noch erstaunlich, immer noch unser Lieblingsmensch! 🌟</p>
         </div>
         <PhotoGrid 
@@ -285,7 +285,9 @@ export default {
       { id: 3, src: '/photos/pazi/SkifoahnStahu.jpg', caption: 'Abschluss beim Reitzi Ski Ausflug in der Alm Arena' },
       { id: 4, src: '/photos/pazi/BergArni.jpg', caption: 'Auch am Berg wird fleißig Party gemacht! 🎶' },
       {id : 5, src: '/photos/pazi/LaungaLulatsch.jpg', caption: 'Auch gemeinsam aufs Festival fahren die beiden! 🎉'},
-      { id: 7, src: '/photos/pazi/AnkunftPazi.jpg', caption: 'Helga und Pazi - nach einem halben Jahr endlich wieder vereint! 👩‍👦' },
+      { id: 6, src: '/photos/pazi/AnkunftPazi.jpg', caption: 'Helga und Pazi - nach einem halben Jahr endlich wieder vereint! 👩‍👦' },
+      { id: 7, src: '/photos/pazi/EssenEinstein.jpg', caption: 'Pazi und Helga - das perfekte Team beim Essen! 🍽️'       },
+       { id: 8, src: '/photos/pazi/ZuZweit.jpg', caption: 'Zur Sponsionsfeier nach Wien gereist! 🎓'}
     ]) 
 
     const recentPhotos = ref([ 
