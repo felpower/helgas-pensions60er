@@ -241,10 +241,10 @@
         <div class="score-display" data-aos="fade-up">
           <div class="score-item">
             <span class="score-label">Richtige Antworten:</span>
-            <span class="score-value">{{ correctAnswers }} / {{ answeredQuestions }}</span>
+            <span class="score-value">{{ correctAnswers }} / {{ questions.slice(0, currentQuestion + 1).filter(q => q.type !== 'section').length }}</span>
           </div>
           <div class="progress-bar">
-            <div 
+            <div
               class="progress-fill" 
               :style="{ width: (answeredQuestions / questions.length) * 100 + '%' }"
             ></div>
@@ -434,6 +434,13 @@ export default {
         correct: ["Schriftführerin", "Chefin", "Schnapsdrossel"],
         explanation: "Helga ist beim Musikverein Kleinraming die Schriftführerin aber im Insgeheimen auch die Chefin und Schnapsdrossel sowieso – Protokolle mit Schmäh garantiert! 📝😄"
       },
+      {
+        question: "Wie hieß Helgas Schlafmöglichkeit am Woodstock der Blasmusik? 🎶",
+        type: "multiple",
+        options: ["Wellness Zelt Auto", "Blasmusiker Schlitten", "Fake Taxi", "Schottergruben Traktor", "Bang Bus"],
+        correct: "Fake Taxi",
+        explanation: "Am Woodstock der Blasmusik war Helgas Schlafplatz das legendäre 'Fake Taxi' – unvergesslich! 🚕🎺"
+      },
       { 
         title: "Ihr seit ja richtige Helga Spezialisten! Hier gibt's das nächste Geschenk! 🎁", 
         type: "section",
@@ -473,9 +480,9 @@ export default {
       {
         question: "Was ist Helgas Lieblingsbeschäftigung am Sonntag? ☀️",
         type: "multiple",
-        options: ["In die Kirche gehen", "Kuchen backen", "Keine Anrufe keine Besuche!", "Wandern mit der Musikkapelle", "Gemütlich einen trinken am Zeltfest"],
-        correct: ["Keine Anrufe keine Besuche!", "Gemütlich einen trinken am Zeltfest"],
-        explanation: "Am Sonntag will Helga ihre Ruhe – keine Anrufe, keine Besuche! 📵🚪 Aber in Wahrheit geht Sie liebend gerne am Sonntag aufs Zeltfest"
+        options: ["In die Kirche gehen", "Kuchen backen", "Keine Anrufe keine Besuche!", "Wandern mit der Musikkapelle", "Frühschoppen am Zeltfest"],
+        correct: ["Keine Anrufe keine Besuche!", "Frühschoppen am Zeltfest"],
+        explanation: "Am Sonntag will Helga ihre Ruhe – keine Anrufe, keine Besuche! 📵🚪 Aber in Wahrheit geht Sie liebend gerne am Sonntag aufs Zeltfest zum Frühschoppen! 🍻"
       },
       {
         question: "Welches besondere Alter feiert Helga heute? 🎊",

@@ -79,8 +79,8 @@
       <section id="family-life" class="section" data-aos="zoom-in">
         <h2 class="section-title">👨‍👩‍👧‍👦 Familienabenteuer 👨‍👩‍👧‍👦</h2>
         <div class="story-text" data-aos="slide-up">
-          <p>Das Kapitel, in dem Helga zur weltbesten Mama wurde!</p>
-          <p>Kinder großziehen, Erinnerungen schaffen und dabei immer noch fabelhaft aussehen! 💅</p>
+          <p>Gemeinsam als Familie durch dick und dünn! 💪</p>
+          <p>Weil Familie das wichtigste für Helga ist!</p>
         </div>
         <PhotoGrid 
           :photos="familyPhotos" 
@@ -280,12 +280,12 @@ export default {
     ])
 
     const paziPhotos = ref([
-      { id: 2, src: '/photos/pazi/SkifoahnStahu.jpg', caption: 'Abschluss beim Reitzi Ski Ausflug in der Alm Arena' },
-      { id: 3, src: '/photos/pazi/BergArni.jpg', caption: 'Auch am Berg wird fleißig Party gemacht! 🎶' },
-      {id : 4, src: '/photos/pazi/LaungaLulatsch.jpg', caption: 'Auch gemeinsam aufs Festival fahren die beiden! 🎉'},
-      { id: 1, src: '/photos/pazi/AnkunftPazi.jpg', caption: 'Helga und Pazi - nach einem halben Jahr endlich wieder vereint! 👩‍👦' },
-      { id: 5, src: '/photos/pazi/PaziBaby.jpg', caption: 'Mama Helga und ihr kleiner Pazi beim Baden! 🏊'       },
-      { id: 6, src: '/photos/pazi/PaziKuchenBaby.jpg', caption: 'Gemeinsam am Kuchen essen, immer wieder eine Sauerei gewesen! 🎂' }
+      { id: 1, src: '/photos/pazi/PaziBaby.jpg', caption: 'Mama Helga und ihr kleiner Pazi beim Baden! 🏊'       },
+      { id: 2, src: '/photos/pazi/PaziKuchenBaby.jpg', caption: 'Gemeinsam am Kuchen essen, immer wieder eine Sauerei gewesen! 🎂' },
+      { id: 3, src: '/photos/pazi/SkifoahnStahu.jpg', caption: 'Abschluss beim Reitzi Ski Ausflug in der Alm Arena' },
+      { id: 4, src: '/photos/pazi/BergArni.jpg', caption: 'Auch am Berg wird fleißig Party gemacht! 🎶' },
+      {id : 5, src: '/photos/pazi/LaungaLulatsch.jpg', caption: 'Auch gemeinsam aufs Festival fahren die beiden! 🎉'},
+      { id: 7, src: '/photos/pazi/AnkunftPazi.jpg', caption: 'Helga und Pazi - nach einem halben Jahr endlich wieder vereint! 👩‍👦' },
     ]) 
 
     const recentPhotos = ref([ 
